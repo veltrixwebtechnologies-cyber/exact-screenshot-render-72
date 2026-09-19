@@ -3,7 +3,14 @@
 // possibility that still needs validation in the interview.
 
 export interface EvidenceItem {
-  source: "GitHub" | "Projects" | "Achievements" | "Certifications" | "Learning" | "Resume";
+  source:
+    | "GitHub"
+    | "Projects"
+    | "Achievements"
+    | "Certifications"
+    | "Learning"
+    | "Resume"
+    | "Portfolio";
   ref: string;
   detail: string;
 }
@@ -33,6 +40,13 @@ export interface HypothesisInput {
   certifications: Array<{ name: string; issuer?: string | null }>;
   learning: Array<{ course: string; skills_gained?: string[] | null }>;
   resumeText?: string | null;
+  /** Claims read from a verified portfolio, with how strong their evidence is. */
+  portfolioClaims?: Array<{
+    claim: string;
+    strength: string;
+    repo_name?: string | null;
+    technologies?: string[] | null;
+  }>;
 }
 
 const SYSTEM_TECH = [
@@ -169,6 +183,37 @@ export function deriveHypotheses(input: HypothesisInput): CapabilityHypothesis[]
           detail: c.issuer ?? "Certification",
         })),
       ],
+    });
+  }
+
+  const claims = input.portfolioClaims ?? [];
+  const supported = claims.filter((c) => c.strength === "strong");
+  const unproven = claims.filter((c) => c.strength !== "strong");
+
+  if (supported.length) {
+    out.push({
+      capability: "Demonstrated Delivery",
+      needs: "Which decisions in that delivery were theirs, since the code evidence only shows the result.",
+      evidence: supported.slice(0, 3).map((c) => ({
+        source: "Portfolio" as const,
+        ref: c.repo_name ?? c.claim.slice(0, 60),
+        detail: `Portfolio claim supported by repository evidence: ${c.claim.slice(0, 140)}`,
+      })),
+    });
+  }
+
+  if (unproven.length) {
+    out.push({
+      capability: "Claimed Capability (needs demonstration)",
+      needs:
+        "Whether they personally built what the portfolio claims — the connected project evidence does not establish it yet.",
+      evidence: unproven.slice(0, 3).map((c) => ({
+        source: "Portfolio" as const,
+        ref: c.repo_name ?? c.claim.slice(0, 60),
+        detail: `Portfolio claim awaiting supporting evidence: ${c.claim.slice(0, 140)}${
+          (c.technologies ?? []).length ? ` (mentions ${(c.technologies ?? []).join(", ")})` : ""
+        }`,
+      })),
     });
   }
 
