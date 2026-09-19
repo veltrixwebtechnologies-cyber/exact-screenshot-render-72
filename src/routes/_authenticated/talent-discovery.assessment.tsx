@@ -36,7 +36,18 @@ interface Question {
   step: number;
   total: number;
   fallback: boolean;
+  type: "evidence_validation" | "behavioural" | "technical_deep_dive";
+  rationale: string;
+  evidenceConsidered: string[];
+  groundedIn: string;
 }
+
+const TYPE_LABEL: Record<Question["type"], string> = {
+  evidence_validation: "Evidence validation",
+  behavioural: "Behavioural",
+  technical_deep_dive: "Technical deep dive",
+};
+
 
 function AssessmentPage() {
   const navigate = useNavigate();
