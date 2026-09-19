@@ -1,24 +1,152 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Compass, LineChart, Search, Sparkles, Target } from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import heroImage from "@/assets/talentiq-hero.jpg";
+
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "TalentIQ — AI-powered talent discovery & career intelligence" },
+      {
+        name: "description",
+        content:
+          "TalentIQ surfaces the skills and potential capabilities hidden behind job titles, matches people to internal roles and turns skill gaps into development plans.",
+      },
+      { property: "og:title", content: "TalentIQ — AI-powered talent discovery" },
+      {
+        property: "og:description",
+        content:
+          "Discover, match, develop and grow internal talent with evidence-based capability insights.",
+      },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const pillars = [
+  {
+    icon: Sparkles,
+    title: "Discover",
+    body: "An adaptive interview combined with projects, achievements and learning history surfaces potential capabilities a résumé never shows.",
+  },
+  {
+    icon: Compass,
+    title: "Match",
+    body: "Explainable matching against open internal roles, with the evidence behind every match and the skills still to build.",
+  },
+  {
+    icon: Target,
+    title: "Develop",
+    body: "Skill gaps against a chosen target role, turned into a specific plan of courses, projects and mentoring.",
+  },
+  {
+    icon: LineChart,
+    title: "Grow",
+    body: "A personalised roadmap from current role to long-term destination, plus workforce intelligence for HR.",
+  },
+];
+
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background">
+      <header className="glass-bar sticky top-0 z-30">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 lg:px-8">
+          <div className="flex items-center gap-2">
+            <span className="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground">
+              <Sparkles aria-hidden className="size-4" />
+            </span>
+            <span className="text-sm font-semibold tracking-tight">TalentIQ</span>
+          </div>
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Sign in
+            <ArrowRight aria-hidden className="size-3.5" />
+          </Link>
+        </div>
+      </header>
+
+      <section className="relative overflow-hidden border-b border-border">
+        <div aria-hidden className="grid-faint pointer-events-none absolute inset-0" />
+        <div className="relative mx-auto max-w-6xl px-4 py-20 lg:px-8 lg:py-28">
+          <p className="eyebrow">Talent discovery &amp; career intelligence</p>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">
+            A job title never shows everything a person can do.
+          </h1>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            TalentIQ reads the evidence already inside your organisation — projects, achievements,
+            certifications, learning history — and pairs it with an adaptive interview to surface
+            potential capabilities, match people to internal roles and close real skill gaps.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Open the workspace
+              <ArrowRight aria-hidden className="size-4" />
+            </Link>
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
+            >
+              <Search aria-hidden className="size-4" />
+              Explore HR intelligence
+            </Link>
+          </div>
+
+          <div className="panel mt-14 overflow-hidden p-2">
+            <img
+              src={heroImage}
+              alt="TalentIQ workforce dashboard with a capability profile card"
+              width={1600}
+              height={1104}
+              className="w-full rounded-lg"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-20 lg:px-8">
+        <h2 className="text-2xl font-semibold tracking-tight">Discover → Match → Develop → Grow</h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {pillars.map((pillar) => (
+            <article key={pillar.title} className="panel p-5">
+              <span className="grid size-8 place-items-center rounded-md bg-primary-soft text-primary-soft-foreground">
+                <pillar.icon aria-hidden className="size-4" />
+              </span>
+              <h3 className="mt-4 text-base font-semibold">{pillar.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{pillar.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-surface">
+        <div className="mx-auto max-w-3xl px-4 py-16 text-center lg:px-8">
+          <h2 className="text-xl font-semibold">Insights you can defend</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            TalentIQ never claims a questionnaire proves a talent. Every capability is presented as
+            a potential strength, with the confidence level, the evidence behind it and a plain
+            explanation of why it was identified.
+          </p>
+          <Link
+            to="/auth"
+            className="mt-7 inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Get started
+            <ArrowRight aria-hidden className="size-4" />
+          </Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-border py-8">
+        <p className="mx-auto max-w-6xl px-4 text-xs text-muted-foreground lg:px-8">
+          TalentIQ · Internal talent discovery and career intelligence. Sample workforce content is
+          labelled as demo data.
+        </p>
+      </footer>
     </div>
   );
 }
