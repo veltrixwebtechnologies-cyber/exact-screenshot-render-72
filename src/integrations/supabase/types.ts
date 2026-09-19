@@ -727,6 +727,7 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_staff_definer: { Args: { _user_id: string }; Returns: boolean }
       owns_employee: { Args: { _employee_id: string }; Returns: boolean }
     }
     Enums: {
