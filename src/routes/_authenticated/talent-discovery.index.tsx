@@ -54,7 +54,8 @@ function BuildProfileFlow() {
     /leader|mentor|communicat|coordinat|ownership|strateg/i.test(insight.capability),
   ).length;
 
-  const hasSources = (resumes?.length ?? 0) > 0 || stats.repos > 0 || projects.length > 0;
+  const hasResume = (resumes?.length ?? 0) > 0;
+  const hasSources = hasResume;
   const hasExtraction = skills.length > 0 || stats.signals.length > 0;
   const hasInterview = insights.length > 0;
 
@@ -74,21 +75,23 @@ function BuildProfileFlow() {
         title="Build your capability profile"
         description="Four steps: connect your evidence, let TalentMap AI read it, answer an adaptive interview, then see what it can defend — and why."
         actions={
-          <Link
-            to="/talent-discovery/assessment"
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Sparkles aria-hidden className="size-4" />
-            {hasInterview ? "Run a new interview" : "Start the interview"}
-          </Link>
+          hasResume ? (
+            <Link
+              to="/talent-discovery/assessment"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <Sparkles aria-hidden className="size-4" />
+              {hasInterview ? "Run a new interview" : "Start the interview"}
+            </Link>
+          ) : null
         }
       />
 
       <Step
         index={1}
         done={hasSources}
-        title="Connect your evidence"
-        body="Resume, GitHub, projects, achievements, certifications and learning history. Nothing is read from GitHub unless you authorize it."
+        title="Upload your resume, then connect the rest"
+        body="Your resume comes first — it is what everything else is built on. GitHub, a portfolio, projects, achievements, certifications and learning then add to the picture. Nothing is read from GitHub unless you authorize it."
       >
         <ResumeAndGithubSection employeeId={employeeId} compact />
         <PortfolioVerificationSection employeeId={employeeId} compact />
@@ -141,6 +144,7 @@ function BuildProfileFlow() {
         body="Around ten questions, each chosen from your previous answers and your recorded evidence, so the session narrows towards the capabilities that look most likely."
       >
         <div className="flex flex-wrap items-center gap-3">
+          {hasResume ? (
           <Link
             to="/talent-discovery/assessment"
             className="inline-flex items-center gap-1.5 rounded-md border border-border px-3.5 py-2 text-sm font-medium transition-colors hover:bg-accent"
@@ -148,6 +152,12 @@ function BuildProfileFlow() {
             <ListChecks aria-hidden className="size-4" />
             {hasInterview ? "Run a new interview" : "Begin the interview"}
           </Link>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Upload your resume in step 1 and the interview unlocks — its questions are built from
+              your own records.
+            </p>
+          )}
           {hasInterview ? (
             <p className="text-xs text-muted-foreground">
               Last session produced {insights.length} potential capabilities.

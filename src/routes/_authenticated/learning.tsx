@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ResumeGate } from "@/components/talent/resume-gate";
 import { useState } from "react";
 import { BookOpen, GraduationCap, Hammer, Users } from "lucide-react";
 
@@ -28,7 +29,11 @@ export const Route = createFileRoute("/_authenticated/learning")({
       { property: "og:description", content: "Learning tied to the gaps that matter." },
     ],
   }),
-  component: LearningPage,
+  component: () => (
+    <ResumeGate what="Learning recommendations">
+      <LearningPage />
+    </ResumeGate>
+  ),
 });
 
 const modes = [

@@ -7,6 +7,7 @@ import { careerChat } from "@/lib/talent.functions";
 import { AIDisclosure, Chip, PageHeader } from "@/components/talent/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ResumeGate } from "@/components/talent/resume-gate";
 
 export const Route = createFileRoute("/_authenticated/career-assistant")({
   head: () => ({
@@ -20,7 +21,11 @@ export const Route = createFileRoute("/_authenticated/career-assistant")({
       { property: "og:description", content: "Answers grounded in your recorded data." },
     ],
   }),
-  component: AssistantPage,
+  component: () => (
+    <ResumeGate what="Ask TalentMap">
+      <AssistantPage />
+    </ResumeGate>
+  ),
 });
 
 interface Message {
