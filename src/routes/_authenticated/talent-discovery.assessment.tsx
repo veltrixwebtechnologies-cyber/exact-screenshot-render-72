@@ -36,7 +36,18 @@ interface Question {
   step: number;
   total: number;
   fallback: boolean;
+  type: "evidence_validation" | "behavioural" | "technical_deep_dive";
+  rationale: string;
+  evidenceConsidered: string[];
+  groundedIn: string;
 }
+
+const TYPE_LABEL: Record<Question["type"], string> = {
+  evidence_validation: "Evidence validation",
+  behavioural: "Behavioural",
+  technical_deep_dive: "Technical deep dive",
+};
+
 
 function AssessmentPage() {
   const navigate = useNavigate();
@@ -49,6 +60,8 @@ function AssessmentPage() {
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const [showWhy, setShowWhy] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [finishing, setFinishing] = useState(false);
   const started = useRef(false);
@@ -57,6 +70,8 @@ function AssessmentPage() {
     async (id: string) => {
       setLoading(true);
       setSelected(null);
+      setShowWhy(false);
+
       try {
         const result = await fetchQuestion({ data: { assessmentId: id } });
         if ("done" in result) {
@@ -174,9 +189,11 @@ function AssessmentPage() {
       ) : (
         <div className="panel space-y-5 p-6">
           <div className="flex flex-wrap items-center gap-2">
-            <Chip tone="primary">{question.category}</Chip>
+            <Chip tone="primary">{TYPE_LABEL[question.type]}</Chip>
+            <Chip tone="outline">{question.category}</Chip>
             {question.fallback ? <Chip tone="outline">Standard question set</Chip> : null}
           </div>
+          <p className="text-xs text-muted-foreground">{question.groundedIn}</p>
           <h2 className="text-lg font-semibold leading-snug">{question.question}</h2>
           <div className="space-y-2">
             {question.options.map((option, index) => (
@@ -194,11 +211,44 @@ function AssessmentPage() {
               </button>
             ))}
           </div>
+
+          <div className="rounded-lg border border-border/70 bg-muted/40 p-3">
+            <button
+              type="button"
+              onClick={() => setShowWhy((v) => !v)}
+              className="text-xs font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              {showWhy ? "Hide why we are asking this" : "Why are we asking this?"}
+            </button>
+            {showWhy ? (
+              <div className="mt-3 space-y-2 text-xs text-muted-foreground">
+                <p>{question.rationale}</p>
+                <div>
+                  <p className="font-semibold text-foreground">Evidence considered</p>
+                  {question.evidenceConsidered.length ? (
+                    <ul className="mt-1 space-y-1">
+                      {question.evidenceConsidered.map((item) => (
+                        <li key={item}>• {item}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-1">
+                      No connected evidence yet — connect GitHub or upload a resume and the questions become
+                      specific to your own work.
+                    </p>
+                  )}
+                  {question.step > 1 ? <p className="mt-1">• Your previous answers in this session</p> : null}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
           <Button className="w-full" disabled={selected === null} onClick={handleNext}>
             {question.step >= question.total ? "Finish and see results" : "Next question"}
           </Button>
         </div>
       )}
+
 
       <AIDisclosure>
         Your answers are treated as signals, not proof. They are weighed against your recorded work to

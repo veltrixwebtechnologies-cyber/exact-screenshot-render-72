@@ -2,6 +2,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 import { pickFallbackQuestion, QUESTION_BANK, type BankQuestion } from "./question-bank";
+import {
+  deriveHypotheses,
+  groundedFallbackQuestion,
+  hypothesesToText,
+  typeForStep,
+  type CapabilityHypothesis,
+  type QuestionType,
+} from "./hypotheses";
 import { callAI, parseJSON } from "./ai.server";
 
 export const TOTAL_QUESTIONS = 10;
@@ -16,6 +24,8 @@ interface EmployeeContext {
   certifications: any[];
   learning: any[];
   insights: any[];
+  github: any[];
+  resumes: any[];
 }
 
 async function loadEmployeeContext(
@@ -23,7 +33,7 @@ async function loadEmployeeContext(
   employeeId: string,
 ): Promise<EmployeeContext | null> {
   const { supabase } = ctx;
-  const [employee, skills, projects, achievements, certifications, learning, insights] =
+  const [employee, skills, projects, achievements, certifications, learning, insights, github, resumes] =
     await Promise.all([
       supabase.from("employees").select("*").eq("id", employeeId).maybeSingle(),
       supabase
@@ -35,6 +45,13 @@ async function loadEmployeeContext(
       supabase.from("certifications").select("*").eq("employee_id", employeeId),
       supabase.from("learning_records").select("*").eq("employee_id", employeeId),
       supabase.from("talent_insights").select("*").eq("employee_id", employeeId),
+      supabase.from("github_evidence").select("*").eq("employee_id", employeeId),
+      supabase
+        .from("employee_resumes")
+        .select("file_name, extracted_text, created_at")
+        .eq("employee_id", employeeId)
+        .order("created_at", { ascending: false })
+        .limit(1),
     ]);
 
   if (!employee.data) return null;
@@ -52,8 +69,23 @@ async function loadEmployeeContext(
     certifications: certifications.data ?? [],
     learning: learning.data ?? [],
     insights: insights.data ?? [],
+    github: github.data ?? [],
+    resumes: resumes.data ?? [],
   };
 }
+
+function hypothesesFor(context: EmployeeContext | null): CapabilityHypothesis[] {
+  if (!context) return [];
+  return deriveHypotheses({
+    github: context.github as any[],
+    projects: context.projects as any[],
+    achievements: context.achievements as any[],
+    certifications: context.certifications as any[],
+    learning: context.learning as any[],
+    resumeText: context.resumes[0]?.extracted_text ?? null,
+  });
+}
+
 
 function contextToText(context: EmployeeContext): string {
   const e = context.employee;
@@ -93,10 +125,24 @@ function contextToText(context: EmployeeContext): string {
       ? context.learning.map((l) => `- ${l.course} (${l.provider ?? "unknown"}) skills: ${(l.skills_gained ?? []).join(", ")}`)
       : ["- none recorded"]),
     "",
+    "GitHub evidence (actual repositories analysed with the employee's authorisation):",
+    ...(context.github.length
+      ? context.github.map(
+          (g: any) =>
+            `- ${g.repo_name}${g.is_private ? " (private)" : ""}: languages ${(g.languages ?? []).join(", ") || "unknown"}; detected tech ${(g.detected_tech ?? []).join(", ") || "none"}; last activity ${g.last_pushed_at ? String(g.last_pushed_at).slice(0, 10) : "unknown"}; readme summary: ${(g.summary ?? "none").slice(0, 300)}`,
+        )
+      : ["- no GitHub connected"]),
+    "",
+    "Resume extract (first 1500 characters of the uploaded resume):",
+    context.resumes[0]?.extracted_text
+      ? String(context.resumes[0].extracted_text).slice(0, 1500)
+      : "- no resume uploaded",
+    "",
     "Previously detected potential capabilities:",
     ...(context.insights.length
       ? context.insights.map((i) => `- ${i.capability} (confidence ${Math.round(Number(i.confidence) * 100)}%): ${i.explanation ?? ""}`)
       : ["- none yet"]),
+
   ];
   return lines.join("\n");
 }
@@ -145,9 +191,30 @@ interface QuestionPayload {
   step: number;
   total: number;
   fallback: boolean;
+  /** "Evidence validation" | "Behavioural" | "Technical deep dive" */
+  type: QuestionType;
+  /** Plain-language answer to "Why are we asking this?" */
+  rationale: string;
+  /** The real records this question was built from. Never invented. */
+  evidenceConsidered: string[];
+  /** Short grounding line, e.g. "Based on your GitHub projects and your previous answer". */
+  groundedIn: string;
 }
 
-function bankToPayload(question: BankQuestion, step: number): QuestionPayload {
+function groundingLine(hasEvidence: boolean, sources: string[], hasPrevious: boolean): string {
+  const parts: string[] = [];
+  if (hasEvidence && sources.length) parts.push(`your ${sources.join(", ")}`);
+  if (hasPrevious) parts.push("your previous answer");
+  if (!parts.length) return "Based on general working-style signals — connect your evidence for grounded questions";
+  return `Based on ${parts.join(" and ")}`;
+}
+
+function bankToPayload(
+  question: BankQuestion,
+  step: number,
+  grounded: string,
+  hasPrevious: boolean,
+): QuestionPayload {
   return {
     question: question.question,
     category: question.category,
@@ -155,6 +222,12 @@ function bankToPayload(question: BankQuestion, step: number): QuestionPayload {
     step,
     total: TOTAL_QUESTIONS,
     fallback: true,
+    type: "behavioural",
+    rationale: `This question helps TalentIQ understand how you work in practice${
+      hasPrevious ? ", building on your previous answers" : ""
+    }. It is a standard question, used because we could not generate one from your own evidence right now.`,
+    evidenceConsidered: [],
+    groundedIn: grounded,
   };
 }
 
@@ -197,14 +270,40 @@ export const nextQuestion = createServerFn({ method: "POST" })
 
     const askedTexts = asked.map((r: any) => r.question);
     const employeeContext = await loadEmployeeContext(ctx, assessment.employee_id);
+    const hypotheses = hypothesesFor(employeeContext);
+
+    const sourceLabels: string[] = [];
+    if (employeeContext?.github.length) sourceLabels.push("GitHub projects");
+    if (employeeContext?.resumes.length) sourceLabels.push("resume");
+    if (employeeContext?.projects.length) sourceLabels.push("recorded projects");
+    if ((employeeContext?.learning.length ?? 0) + (employeeContext?.certifications.length ?? 0) > 0)
+      sourceLabels.push("learning history");
+
+    const hasEvidence = hypotheses.length > 0;
+    const previous = asked[asked.length - 1];
+    const grounded = groundingLine(hasEvidence, sourceLabels.slice(0, 2), Boolean(previous));
+    const wantedType = typeForStep(step, hasEvidence);
 
     const prompt = `${LANGUAGE_RULES}
 
-You are running an adaptive capability discovery interview. Ask ONE next question that best reduces uncertainty about which potential capabilities this person has. Do not repeat a theme already covered.
+You are running an adaptive, EVIDENCE-GROUNDED capability discovery interview. Ask ONE next question.
+
+Hard requirements:
+- The question must be grounded in the person's ACTUAL evidence below (name the real repository, project, certification or achievement). Never invent evidence, repository names, employers or numbers.
+- This question must be of type: ${wantedType}.
+  * evidence_validation: "Your GitHub shows <real repo>. Which part did you personally implement?" — the goal is to separate real ownership from mere repository membership.
+  * behavioural: "When <situation seen in their evidence> happened, how did you approach it?" — the goal is working style.
+  * technical_deep_dive: "Why did you choose <real technology in their evidence> for <real repo/project>?" — the goal is reasoning and depth.
+${previous ? `- Make it a FOLLOW-UP on their last answer where that adds information. Last question: "${previous.question}" -> answer: "${previous.answer}".` : ""}
+- There is no correct answer. Each option must map to a DIFFERENT capability signal.
+- Do not repeat a theme already covered.
 
 Question ${step} of about ${TOTAL_QUESTIONS}.
 
-Employee background:
+Capability hypotheses derived from their evidence (each still needs validation):
+${hypothesesToText(hypotheses)}
+
+Full evidence:
 ${employeeContext ? contextToText(employeeContext) : "no profile data"}
 
 Questions already asked:
@@ -212,20 +311,30 @@ ${askedTexts.length ? askedTexts.map((q: string, i: number) => `${i + 1}. ${q} -
 
 Current leading capability signals: ${leading.length ? leading.join(", ") : "none yet"}
 
-Allowed signals: Leadership, Communication, Mentoring, Decision Making, Problem Solving, Creativity, Planning, Research, Team Coordination, Customer Understanding, Ownership, Strategic Thinking.
+Allowed signals: Leadership, Communication, Mentoring, Decision Making, Problem Solving, Creativity, Planning, Research, Team Coordination, Customer Understanding, Ownership, Strategic Thinking, System Thinking, Technical Implementation, Applied AI Engineering.
 
 Return ONLY JSON:
-{"question":"...","category":"short label","options":[{"label":"first person answer option","signals":["Signal"]}]}
-Provide 4 or 5 options. Options must be concrete, work-based and non-leading.`;
+{"question":"...","category":"short label such as the capability under test","rationale":"1-2 sentences: what this question helps TalentIQ understand","evidence_considered":["real repository / project / record name and why it was considered"],"options":[{"label":"first person answer option","signals":["Signal"]}]}
+Provide 4 or 5 options. evidence_considered must only list records that appear in the evidence above; use an empty array if you used none.`;
 
     const raw = await callAI([{ role: "user", content: prompt }], { temperature: 0.7 });
     const parsed = parseJSON<{
       question: string;
       category?: string;
+      rationale?: string;
+      evidence_considered?: string[];
       options: Array<{ label: string; signals?: string[] }>;
     }>(raw);
 
     if (parsed?.question && Array.isArray(parsed.options) && parsed.options.length >= 3) {
+      const known = new Set<string>();
+      for (const h of hypotheses) for (const e of h.evidence) known.add(e.ref.toLowerCase());
+      // Keep only evidence references that really exist in the employee's records.
+      const evidenceConsidered = (parsed.evidence_considered ?? [])
+        .map((e) => String(e))
+        .filter((e) => [...known].some((ref) => e.toLowerCase().includes(ref)))
+        .slice(0, 5);
+
       return {
         question: parsed.question,
         category: parsed.category ?? "Adaptive",
@@ -236,12 +345,33 @@ Provide 4 or 5 options. Options must be concrete, work-based and non-leading.`;
         step,
         total: TOTAL_QUESTIONS,
         fallback: false,
+        type: wantedType,
+        rationale:
+          parsed.rationale ??
+          "This question helps TalentIQ understand how you actually work, so capabilities are backed by evidence rather than assumed.",
+        evidenceConsidered: evidenceConsidered.length
+          ? evidenceConsidered
+          : hypotheses.slice(0, 3).flatMap((h) => h.evidence.slice(0, 1).map((e) => `${e.ref} — ${e.detail}`)),
+        groundedIn: grounded,
+      };
+    }
+
+    // AI unavailable: still ground the question in real evidence where we can.
+    const groundedQuestion = groundedFallbackQuestion(hypotheses, askedTexts, step);
+    if (groundedQuestion) {
+      return {
+        ...groundedQuestion,
+        step,
+        total: TOTAL_QUESTIONS,
+        fallback: true,
+        groundedIn: grounded,
       };
     }
 
     const askedIds = QUESTION_BANK.filter((q) => askedTexts.includes(q.question)).map((q) => q.id);
-    return bankToPayload(pickFallbackQuestion(askedIds, leading), step);
+    return bankToPayload(pickFallbackQuestion(askedIds, leading), step, grounded, Boolean(previous));
   });
+
 
 export const submitAnswer = createServerFn({ method: "POST" })
   .inputValidator(
@@ -309,16 +439,20 @@ export const completeAssessment = createServerFn({ method: "POST" })
 
     const prompt = `${LANGUAGE_RULES}
 
-Combine the assessment answers with the employee's recorded experience to identify potential capabilities.
+Combine ALL evidence sources (resume, GitHub repositories, projects, achievements, certifications, learning history) with the interview answers to identify potential capabilities. The interview validates evidence; it never proves a capability on its own.
+
+Capability hypotheses that were under test:
+${hypothesesToText(hypothesesFor(employeeContext))}
 
 ${employeeContext ? contextToText(employeeContext) : "no profile data"}
 
-Assessment answers:
+Interview answers:
 ${answers.map((r: any, i: number) => `${i + 1}. Q: ${r.question}\n   A: ${r.answer}\n   signals: ${(r.detected_signals ?? []).join(", ")}`).join("\n")}
 
 Return ONLY JSON of 3 to 5 items:
-[{"capability":"Leadership","confidence":0.78,"evidence":["short factual bullet drawn from the data"],"explanation":"We identified potential ... because ...","explore":["Role or area to explore"]}]
-Confidence is 0.4-0.9. Evidence bullets must come from the data above, never invented.`;
+[{"capability":"Leadership","confidence":0.78,"evidence":["short factual bullet naming the real source, e.g. 'GitHub: LocalShore — auth + PostgreSQL + payments'"],"explanation":"We identified potential ... because ...","explore":["Role or area to explore"]}]
+Confidence is 0.4-0.9 and must be lower when the only support is interview answers. Every evidence bullet must name its real source record from the data above, never invented.`;
+
 
     let insights = parseJSON<GeneratedInsight[]>(await callAI([{ role: "user", content: prompt }]));
 
@@ -331,9 +465,13 @@ Confidence is 0.4-0.9. Evidence bullets must come from the data above, never inv
         }
       }
       const evidenceBullets = [
+        ...(employeeContext?.github ?? []).map(
+          (g: any) => `GitHub: ${g.repo_name} — ${(g.detected_tech ?? []).slice(0, 4).join(", ") || "analysed repository"}`,
+        ),
         ...(employeeContext?.projects ?? []).map((p) => `${p.title}: ${p.role ?? "contributor"}`),
         ...(employeeContext?.achievements ?? []).map((a) => a.title),
       ].slice(0, 4);
+
 
       insights = [...counts.entries()]
         .sort((a, b) => b[1] - a[1])
