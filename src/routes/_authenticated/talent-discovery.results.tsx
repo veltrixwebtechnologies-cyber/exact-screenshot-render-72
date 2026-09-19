@@ -7,6 +7,7 @@ import { AIDisclosure, Chip, EmptyState, PageHeader, SectionTitle } from "@/comp
 import { CapabilityCard } from "@/components/talent/capability-card";
 import { RoleMatchCard } from "@/components/talent/role-match-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResumeGate } from "@/components/talent/resume-gate";
 
 export const Route = createFileRoute("/_authenticated/talent-discovery/results")({
   head: () => ({
@@ -20,7 +21,11 @@ export const Route = createFileRoute("/_authenticated/talent-discovery/results")
       { property: "og:description", content: "Evidence-based capability insights." },
     ],
   }),
-  component: ResultsPage,
+  component: () => (
+    <ResumeGate what="Your capability profile">
+      <ResultsPage />
+    </ResumeGate>
+  ),
 });
 
 function ResultsPage() {

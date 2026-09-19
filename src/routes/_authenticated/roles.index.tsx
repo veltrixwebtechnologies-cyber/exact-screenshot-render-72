@@ -8,6 +8,7 @@ import { AIDisclosure, PageHeader } from "@/components/talent/primitives";
 import { RoleMatchCard } from "@/components/talent/role-match-card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResumeGate } from "@/components/talent/resume-gate";
 
 export const Route = createFileRoute("/_authenticated/roles/")({
   head: () => ({
@@ -21,7 +22,11 @@ export const Route = createFileRoute("/_authenticated/roles/")({
       { property: "og:description", content: "Explainable internal role matching." },
     ],
   }),
-  component: RolesPage,
+  component: () => (
+    <ResumeGate what="Internal role matching">
+      <RolesPage />
+    </ResumeGate>
+  ),
 });
 
 function RolesPage() {

@@ -13,6 +13,7 @@ import {
 } from "@/lib/talent.functions";
 import { AIDisclosure, Chip, PageHeader } from "@/components/talent/primitives";
 import { Button } from "@/components/ui/button";
+import { ResumeGate } from "@/components/talent/resume-gate";
 
 export const Route = createFileRoute("/_authenticated/talent-discovery/assessment")({
   head: () => ({
@@ -26,7 +27,11 @@ export const Route = createFileRoute("/_authenticated/talent-discovery/assessmen
       { property: "og:description", content: "Answer a short adaptive interview." },
     ],
   }),
-  component: AssessmentPage,
+  component: () => (
+    <ResumeGate what="The discovery interview">
+      <AssessmentPage />
+    </ResumeGate>
+  ),
 });
 
 interface Question {

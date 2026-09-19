@@ -9,6 +9,7 @@ import { evidenceMix, matchBreakdown, sourceBucket } from "@/lib/evidence";
 import { AIDisclosure, Chip, PageHeader, SectionTitle } from "@/components/talent/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResumeGate } from "@/components/talent/resume-gate";
 
 export const Route = createFileRoute("/_authenticated/roles/$roleId")({
   head: () => ({
@@ -22,7 +23,11 @@ export const Route = createFileRoute("/_authenticated/roles/$roleId")({
       { property: "og:description", content: "Explainable internal role match with inspectable evidence." },
     ],
   }),
-  component: RoleDetail,
+  component: () => (
+    <ResumeGate what="This match explanation">
+      <RoleDetail />
+    </ResumeGate>
+  ),
 });
 
 function RoleDetail() {

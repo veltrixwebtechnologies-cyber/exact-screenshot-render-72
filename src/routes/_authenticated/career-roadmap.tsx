@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ResumeGate } from "@/components/talent/resume-gate";
 import { useState } from "react";
 
 import { useMe } from "@/hooks/useMe";
@@ -27,7 +28,11 @@ export const Route = createFileRoute("/_authenticated/career-roadmap")({
       { property: "og:description", content: "Current, next, possible future and long-term steps." },
     ],
   }),
-  component: RoadmapPage,
+  component: () => (
+    <ResumeGate what="Your career roadmap">
+      <RoadmapPage />
+    </ResumeGate>
+  ),
 });
 
 function RoadmapPage() {

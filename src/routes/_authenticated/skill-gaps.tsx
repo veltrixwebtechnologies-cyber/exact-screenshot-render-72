@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ResumeGate } from "@/components/talent/resume-gate";
 import { useState } from "react";
 
 import { useMe } from "@/hooks/useMe";
@@ -26,7 +27,11 @@ export const Route = createFileRoute("/_authenticated/skill-gaps")({
       { property: "og:description", content: "Turn gaps into a specific development plan." },
     ],
   }),
-  component: SkillGapsPage,
+  component: () => (
+    <ResumeGate what="Skill gap analysis">
+      <SkillGapsPage />
+    </ResumeGate>
+  ),
 });
 
 function SkillGapsPage() {

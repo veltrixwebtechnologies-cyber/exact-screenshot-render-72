@@ -15,6 +15,7 @@ import {
 import { CapabilityCard } from "@/components/talent/capability-card";
 import { RoleMatchCard } from "@/components/talent/role-match-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResumeGate } from "@/components/talent/resume-gate";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -29,7 +30,11 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       { property: "og:description", content: "Evidence-based talent intelligence for your career." },
     ],
   }),
-  component: Dashboard,
+  component: () => (
+    <ResumeGate what="Your dashboard">
+      <Dashboard />
+    </ResumeGate>
+  ),
 });
 
 function Dashboard() {

@@ -174,12 +174,27 @@ export function ResumeAndGithubSection({
       const result = await runProcessResume({ data: { filePath: path, fileName: file.name } });
       if (!result.readable) {
         toast.warning("Resume saved, but little readable text was found in the file.");
-      } else if (result.githubUsername) {
-        toast.success(`Resume saved. A GitHub profile was mentioned: ${result.githubUsername}.`);
       } else {
-        toast.success("Resume saved. No GitHub profile link was found in it.");
+        const added = result.applied;
+        const parts = [
+          added.skills ? `${added.skills} skills` : null,
+          added.projects ? `${added.projects} projects` : null,
+          added.certifications ? `${added.certifications} certifications` : null,
+          added.learning ? `${added.learning} courses` : null,
+          added.achievements ? `${added.achievements} achievements` : null,
+        ].filter(Boolean);
+        toast.success(
+          parts.length
+            ? `Resume read — added ${parts.join(", ")} to your profile.`
+            : "Resume saved and read.",
+        );
+        if (result.githubUsername) {
+          toast.info(`A GitHub profile was mentioned: ${result.githubUsername}. Connect it to add repository evidence.`);
+        }
       }
-      queryClient.invalidateQueries({ queryKey: ["resumes", employeeId] });
+      // Everything downstream (skills, roles, gaps, roadmap, learning, assistant)
+      // reads from the profile, so refresh all of it after an upload.
+      await queryClient.invalidateQueries();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Upload failed.");
     } finally {
