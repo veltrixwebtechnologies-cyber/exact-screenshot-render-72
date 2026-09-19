@@ -202,27 +202,43 @@ export function PortfolioVerificationSection({
                       {expanded ? "Hide evidence" : "Show evidence"}
                     </Button>
                     {expanded ? (
-                      <ul className="mt-2 space-y-2">
-                        {claim.checks.map((check) => (
-                          <li key={check.label} className="flex gap-2 text-xs leading-relaxed">
-                            <span
-                              className={
-                                check.passed
-                                  ? "font-semibold text-success"
-                                  : "font-semibold text-muted-foreground"
-                              }
-                            >
-                              {check.passed ? "✓" : "○"}
-                            </span>
-                            <span>
-                              <span className="font-medium">{check.label}</span>
-                              {check.detail ? (
-                                <span className="text-muted-foreground"> — {check.detail}</span>
-                              ) : null}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                        <div>
+                          <p className="eyebrow text-success">Why this is good</p>
+                          <ul className="mt-2 space-y-1.5">
+                            {claimReasons(claim).good.map((line) => (
+                              <li key={line} className="flex gap-2 text-xs leading-relaxed">
+                                <span className="font-semibold text-success">✓</span>
+                                <span>{line}</span>
+                              </li>
+                            ))}
+                            {claimReasons(claim).good.length === 0 ? (
+                              <li className="text-xs text-muted-foreground">
+                                Nothing supports this claim yet.
+                              </li>
+                            ) : null}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="eyebrow text-warning">What is missing</p>
+                          <ul className="mt-2 space-y-1.5">
+                            {claimReasons(claim).bad.map((line) => (
+                              <li
+                                key={line}
+                                className="flex gap-2 text-xs leading-relaxed text-muted-foreground"
+                              >
+                                <span className="font-semibold">○</span>
+                                <span>{line}</span>
+                              </li>
+                            ))}
+                            {claimReasons(claim).bad.length === 0 ? (
+                              <li className="text-xs text-muted-foreground">
+                                Every check passed for this claim.
+                              </li>
+                            ) : null}
+                          </ul>
+                        </div>
+                      </div>
                     ) : null}
                   </div>
                 );

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { RoleLike, SkillHolding } from "@/lib/talent";
 import type { GithubEvidenceRow } from "@/lib/evidence";
+import type { PortfolioVerificationRow } from "@/lib/portfolio";
 
 export interface TalentInsight {
   id: string;
@@ -138,6 +139,22 @@ export function useResumes(employeeId: string | undefined) {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
+    },
+  });
+}
+
+export function usePortfolioVerifications(employeeId: string | undefined) {
+  return useQuery<PortfolioVerificationRow[]>({
+    queryKey: ["portfolio-verifications", employeeId],
+    enabled: Boolean(employeeId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("portfolio_verifications")
+        .select("*")
+        .eq("employee_id", employeeId!)
+        .order("checked_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as PortfolioVerificationRow[];
     },
   });
 }
