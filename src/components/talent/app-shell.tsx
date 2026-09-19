@@ -68,7 +68,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() => setMobileOpen(false)}
             className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
-            activeOptions={{ exact: item.to === "/talent-discovery" ? false : false }}
           >
             <item.icon aria-hidden className="size-4" />
             {item.label}
