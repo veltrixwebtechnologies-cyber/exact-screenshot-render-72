@@ -39,6 +39,14 @@ export const feedbackSchema = z.object({
   comment: z.string().max(600).optional(),
 });
 
+export const portfolioUrlSchema = z.object({
+  portfolioUrl: z.string().min(4, "Enter your portfolio address").max(300),
+});
+
+export const portfolioIdSchema = z.object({
+  id: z.string().uuid("id must be a valid id"),
+});
+
 /** Parses with zod and rethrows a single readable message. */
 export function parseInput<T extends z.ZodTypeAny>(schema: T, data: unknown): z.infer<T> {
   const result = schema.safeParse(data);
