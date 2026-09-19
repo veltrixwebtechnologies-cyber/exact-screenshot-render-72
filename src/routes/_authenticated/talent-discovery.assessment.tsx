@@ -60,6 +60,8 @@ function AssessmentPage() {
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [question, setQuestion] = useState<Question | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const [showWhy, setShowWhy] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [finishing, setFinishing] = useState(false);
   const started = useRef(false);
