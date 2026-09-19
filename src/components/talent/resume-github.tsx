@@ -373,3 +373,12 @@ export function ResumeAndGithubSection({ employeeId }: { employeeId: string }) {
     </section>
   );
 }
+
+function Metric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg border border-border p-4">
+      <p className="font-mono text-2xl font-semibold tabular-nums text-primary">{value}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{label}</p>
+    </div>
+  );
+}
