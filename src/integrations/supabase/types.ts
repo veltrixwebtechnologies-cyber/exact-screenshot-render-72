@@ -690,6 +690,7 @@ export type Database = {
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       owns_employee: { Args: { _employee_id: string }; Returns: boolean }
+      staff_exists: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "employee" | "hr" | "admin"
