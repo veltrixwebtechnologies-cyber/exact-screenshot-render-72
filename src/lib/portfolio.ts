@@ -188,6 +188,22 @@ export function strengthFromChecks(checks: ClaimCheck[]): EvidenceStrength {
   return "needs_evidence";
 }
 
+/** Splits a claim's checks into what supports it and what is still missing. */
+export function claimReasons(claim: PortfolioClaim): { good: string[]; bad: string[] } {
+  const good: string[] = [];
+  const bad: string[] = [];
+  for (const check of claim.checks) {
+    const line = check.detail ? `${check.label} — ${check.detail}` : check.label;
+    (check.passed ? good : bad).push(line);
+  }
+  if (claim.strength === "needs_evidence") {
+    bad.push(
+      "Nothing in your connected evidence establishes this claim yet — demonstrate it in the discovery interview.",
+    );
+  }
+  return { good, bad };
+}
+
 export function overallStrength(claims: PortfolioClaim[]): EvidenceStrength {
   if (!claims.length) return "needs_evidence";
   const strong = claims.filter((claim) => claim.strength === "strong").length;
