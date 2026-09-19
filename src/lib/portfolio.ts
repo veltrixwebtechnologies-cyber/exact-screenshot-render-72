@@ -200,6 +200,9 @@ export function overallStrength(claims: PortfolioClaim[]): EvidenceStrength {
 /** Rejects non-public and non-http targets before any fetch happens. */
 export function safePortfolioUrl(input: string): URL {
   const trimmed = input.trim();
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) && !/^https?:\/\//i.test(trimmed)) {
+    throw new Error("Only http and https links can be checked.");
+  }
   const withScheme = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
   let url: URL;
   try {
