@@ -177,7 +177,8 @@ export function candidateClaims(text: string, limit = 8): string[] {
 }
 
 export function strengthFromChecks(checks: ClaimCheck[]): EvidenceStrength {
-  const passed = (label: string) => checks.find((check) => check.label === check.label && check.label.startsWith(label))?.passed === true;
+  const passed = (prefix: string) =>
+    checks.some((check) => check.label.startsWith(prefix) && check.passed);
   const repoFound = passed("Matching repository");
   const owned = passed("Repository belongs");
   const techBacked = passed("Technology evidence");
