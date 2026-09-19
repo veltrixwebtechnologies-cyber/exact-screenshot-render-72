@@ -30,10 +30,12 @@ interface Message {
 }
 
 const starters = [
+  "What roles could I realistically grow into?",
+  "Why was I matched with my top role?",
+  "What skills am I missing?",
+  "Which project would strengthen my profile?",
+  "Show me the evidence for my leadership capability.",
   "What are my strongest capabilities right now?",
-  "Which internal role suits me best and why?",
-  "What should I learn to become a technical lead?",
-  "Where does my evidence look thin?",
 ];
 
 function AssistantPage() {
@@ -74,7 +76,7 @@ function AssistantPage() {
     <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-3xl flex-col gap-6">
       <PageHeader
         eyebrow="Career AI"
-        title="Ask about your own career"
+        title="Ask TalentIQ"
         description="Career AI answers only from your recorded profile, evidence and the published internal roles."
       />
 

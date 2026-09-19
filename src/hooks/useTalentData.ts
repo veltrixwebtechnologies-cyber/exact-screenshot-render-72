@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { RoleLike, SkillHolding } from "@/lib/talent";
+import type { GithubEvidenceRow } from "@/lib/evidence";
 
 export interface TalentInsight {
   id: string;
@@ -105,6 +106,38 @@ export function useEmployeeBundle(employeeId: string | undefined) {
         learning: (learning.data ?? []) as LearningRow[],
         recommendations: (recommendations.data ?? []) as RecommendationRow[],
       };
+    },
+  });
+}
+
+export function useGithubEvidence(employeeId: string | undefined) {
+  return useQuery<GithubEvidenceRow[]>({
+    queryKey: ["github-evidence", employeeId],
+    enabled: Boolean(employeeId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("github_evidence")
+        .select("*")
+        .eq("employee_id", employeeId!)
+        .order("last_pushed_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as GithubEvidenceRow[];
+    },
+  });
+}
+
+export function useResumes(employeeId: string | undefined) {
+  return useQuery({
+    queryKey: ["resumes", employeeId],
+    enabled: Boolean(employeeId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("employee_resumes")
+        .select("id, file_name, detected_github_username, created_at")
+        .eq("employee_id", employeeId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
     },
   });
 }
