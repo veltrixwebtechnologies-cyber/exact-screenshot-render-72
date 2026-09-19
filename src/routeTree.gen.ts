@@ -12,8 +12,24 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCareerAssistantRouteImport } from './routes/_authenticated/career-assistant'
+import { Route as AuthenticatedCareerRoadmapRouteImport } from './routes/_authenticated/career-roadmap'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedLearningRouteImport } from './routes/_authenticated/learning'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSkillGapsRouteImport } from './routes/_authenticated/skill-gaps'
+import { Route as AuthenticatedHrIndexRouteImport } from './routes/_authenticated/hr.index'
+import { Route as AuthenticatedHrEmergingSkillsRouteImport } from './routes/_authenticated/hr.emerging-skills'
+import { Route as AuthenticatedHrInternalMobilityRouteImport } from './routes/_authenticated/hr.internal-mobility'
+import { Route as AuthenticatedHrSkillGapsRouteImport } from './routes/_authenticated/hr.skill-gaps'
+import { Route as AuthenticatedHrSkillsRouteImport } from './routes/_authenticated/hr.skills'
+import { Route as AuthenticatedHrTalentSearchRouteImport } from './routes/_authenticated/hr.talent-search'
+import { Route as AuthenticatedRolesIndexRouteImport } from './routes/_authenticated/roles.index'
+import { Route as AuthenticatedRolesRoleIdRouteImport } from './routes/_authenticated/roles.$roleId'
+import { Route as AuthenticatedTalentDiscoveryIndexRouteImport } from './routes/_authenticated/talent-discovery.index'
+import { Route as AuthenticatedTalentDiscoveryAssessmentRouteImport } from './routes/_authenticated/talent-discovery.assessment'
+import { Route as AuthenticatedTalentDiscoveryResultsRouteImport } from './routes/_authenticated/talent-discovery.results'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,9 +45,26 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCareerAssistantRoute =
+  AuthenticatedCareerAssistantRouteImport.update({
+    id: '/career-assistant',
+    path: '/career-assistant',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCareerRoadmapRoute =
+  AuthenticatedCareerRoadmapRouteImport.update({
+    id: '/career-roadmap',
+    path: '/career-roadmap',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLearningRoute = AuthenticatedLearningRouteImport.update({
+  id: '/learning',
+  path: '/learning',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
@@ -39,39 +72,216 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSkillGapsRoute = AuthenticatedSkillGapsRouteImport.update({
+  id: '/skill-gaps',
+  path: '/skill-gaps',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHrIndexRoute = AuthenticatedHrIndexRouteImport.update({
+  id: '/hr/',
+  path: '/hr/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHrEmergingSkillsRoute =
+  AuthenticatedHrEmergingSkillsRouteImport.update({
+    id: '/hr/emerging-skills',
+    path: '/hr/emerging-skills',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHrInternalMobilityRoute =
+  AuthenticatedHrInternalMobilityRouteImport.update({
+    id: '/hr/internal-mobility',
+    path: '/hr/internal-mobility',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHrSkillGapsRoute =
+  AuthenticatedHrSkillGapsRouteImport.update({
+    id: '/hr/skill-gaps',
+    path: '/hr/skill-gaps',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHrSkillsRoute = AuthenticatedHrSkillsRouteImport.update({
+  id: '/hr/skills',
+  path: '/hr/skills',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHrTalentSearchRoute =
+  AuthenticatedHrTalentSearchRouteImport.update({
+    id: '/hr/talent-search',
+    path: '/hr/talent-search',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRolesIndexRoute = AuthenticatedRolesIndexRouteImport.update({
+  id: '/roles/',
+  path: '/roles/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRolesRoleIdRoute =
+  AuthenticatedRolesRoleIdRouteImport.update({
+    id: '/roles/$roleId',
+    path: '/roles/$roleId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTalentDiscoveryIndexRoute =
+  AuthenticatedTalentDiscoveryIndexRouteImport.update({
+    id: '/talent-discovery/',
+    path: '/talent-discovery/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTalentDiscoveryAssessmentRoute =
+  AuthenticatedTalentDiscoveryAssessmentRouteImport.update({
+    id: '/talent-discovery/assessment',
+    path: '/talent-discovery/assessment',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTalentDiscoveryResultsRoute =
+  AuthenticatedTalentDiscoveryResultsRouteImport.update({
+    id: '/talent-discovery/results',
+    path: '/talent-discovery/results',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/career-assistant': typeof AuthenticatedCareerAssistantRoute
+  '/career-roadmap': typeof AuthenticatedCareerRoadmapRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/learning': typeof AuthenticatedLearningRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/skill-gaps': typeof AuthenticatedSkillGapsRoute
+  '/hr/emerging-skills': typeof AuthenticatedHrEmergingSkillsRoute
+  '/hr/internal-mobility': typeof AuthenticatedHrInternalMobilityRoute
+  '/hr/skill-gaps': typeof AuthenticatedHrSkillGapsRoute
+  '/hr/skills': typeof AuthenticatedHrSkillsRoute
+  '/hr/talent-search': typeof AuthenticatedHrTalentSearchRoute
+  '/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
+  '/talent-discovery/assessment': typeof AuthenticatedTalentDiscoveryAssessmentRoute
+  '/talent-discovery/results': typeof AuthenticatedTalentDiscoveryResultsRoute
+  '/hr/': typeof AuthenticatedHrIndexRoute
+  '/roles/': typeof AuthenticatedRolesIndexRoute
+  '/talent-discovery/': typeof AuthenticatedTalentDiscoveryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/career-assistant': typeof AuthenticatedCareerAssistantRoute
+  '/career-roadmap': typeof AuthenticatedCareerRoadmapRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/learning': typeof AuthenticatedLearningRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/skill-gaps': typeof AuthenticatedSkillGapsRoute
+  '/hr/emerging-skills': typeof AuthenticatedHrEmergingSkillsRoute
+  '/hr/internal-mobility': typeof AuthenticatedHrInternalMobilityRoute
+  '/hr/skill-gaps': typeof AuthenticatedHrSkillGapsRoute
+  '/hr/skills': typeof AuthenticatedHrSkillsRoute
+  '/hr/talent-search': typeof AuthenticatedHrTalentSearchRoute
+  '/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
+  '/talent-discovery/assessment': typeof AuthenticatedTalentDiscoveryAssessmentRoute
+  '/talent-discovery/results': typeof AuthenticatedTalentDiscoveryResultsRoute
+  '/hr': typeof AuthenticatedHrIndexRoute
+  '/roles': typeof AuthenticatedRolesIndexRoute
+  '/talent-discovery': typeof AuthenticatedTalentDiscoveryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/career-assistant': typeof AuthenticatedCareerAssistantRoute
+  '/_authenticated/career-roadmap': typeof AuthenticatedCareerRoadmapRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/learning': typeof AuthenticatedLearningRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/skill-gaps': typeof AuthenticatedSkillGapsRoute
+  '/_authenticated/hr/emerging-skills': typeof AuthenticatedHrEmergingSkillsRoute
+  '/_authenticated/hr/internal-mobility': typeof AuthenticatedHrInternalMobilityRoute
+  '/_authenticated/hr/skill-gaps': typeof AuthenticatedHrSkillGapsRoute
+  '/_authenticated/hr/skills': typeof AuthenticatedHrSkillsRoute
+  '/_authenticated/hr/talent-search': typeof AuthenticatedHrTalentSearchRoute
+  '/_authenticated/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
+  '/_authenticated/talent-discovery/assessment': typeof AuthenticatedTalentDiscoveryAssessmentRoute
+  '/_authenticated/talent-discovery/results': typeof AuthenticatedTalentDiscoveryResultsRoute
+  '/_authenticated/hr/': typeof AuthenticatedHrIndexRoute
+  '/_authenticated/roles/': typeof AuthenticatedRolesIndexRoute
+  '/_authenticated/talent-discovery/': typeof AuthenticatedTalentDiscoveryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/profile'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/career-assistant'
+    | '/career-roadmap'
+    | '/dashboard'
+    | '/learning'
+    | '/profile'
+    | '/settings'
+    | '/skill-gaps'
+    | '/hr/emerging-skills'
+    | '/hr/internal-mobility'
+    | '/hr/skill-gaps'
+    | '/hr/skills'
+    | '/hr/talent-search'
+    | '/roles/$roleId'
+    | '/talent-discovery/assessment'
+    | '/talent-discovery/results'
+    | '/hr/'
+    | '/roles/'
+    | '/talent-discovery/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/profile'
+  to:
+    | '/'
+    | '/auth'
+    | '/career-assistant'
+    | '/career-roadmap'
+    | '/dashboard'
+    | '/learning'
+    | '/profile'
+    | '/settings'
+    | '/skill-gaps'
+    | '/hr/emerging-skills'
+    | '/hr/internal-mobility'
+    | '/hr/skill-gaps'
+    | '/hr/skills'
+    | '/hr/talent-search'
+    | '/roles/$roleId'
+    | '/talent-discovery/assessment'
+    | '/talent-discovery/results'
+    | '/hr'
+    | '/roles'
+    | '/talent-discovery'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/career-assistant'
+    | '/_authenticated/career-roadmap'
     | '/_authenticated/dashboard'
+    | '/_authenticated/learning'
     | '/_authenticated/profile'
+    | '/_authenticated/settings'
+    | '/_authenticated/skill-gaps'
+    | '/_authenticated/hr/emerging-skills'
+    | '/_authenticated/hr/internal-mobility'
+    | '/_authenticated/hr/skill-gaps'
+    | '/_authenticated/hr/skills'
+    | '/_authenticated/hr/talent-search'
+    | '/_authenticated/roles/$roleId'
+    | '/_authenticated/talent-discovery/assessment'
+    | '/_authenticated/talent-discovery/results'
+    | '/_authenticated/hr/'
+    | '/_authenticated/roles/'
+    | '/_authenticated/talent-discovery/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -103,11 +313,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/career-assistant': {
+      id: '/_authenticated/career-assistant'
+      path: '/career-assistant'
+      fullPath: '/career-assistant'
+      preLoaderRoute: typeof AuthenticatedCareerAssistantRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/career-roadmap': {
+      id: '/_authenticated/career-roadmap'
+      path: '/career-roadmap'
+      fullPath: '/career-roadmap'
+      preLoaderRoute: typeof AuthenticatedCareerRoadmapRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/learning': {
+      id: '/_authenticated/learning'
+      path: '/learning'
+      fullPath: '/learning'
+      preLoaderRoute: typeof AuthenticatedLearningRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profile': {
@@ -117,17 +348,143 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/skill-gaps': {
+      id: '/_authenticated/skill-gaps'
+      path: '/skill-gaps'
+      fullPath: '/skill-gaps'
+      preLoaderRoute: typeof AuthenticatedSkillGapsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr/': {
+      id: '/_authenticated/hr/'
+      path: '/hr'
+      fullPath: '/hr/'
+      preLoaderRoute: typeof AuthenticatedHrIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr/emerging-skills': {
+      id: '/_authenticated/hr/emerging-skills'
+      path: '/hr/emerging-skills'
+      fullPath: '/hr/emerging-skills'
+      preLoaderRoute: typeof AuthenticatedHrEmergingSkillsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr/internal-mobility': {
+      id: '/_authenticated/hr/internal-mobility'
+      path: '/hr/internal-mobility'
+      fullPath: '/hr/internal-mobility'
+      preLoaderRoute: typeof AuthenticatedHrInternalMobilityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr/skill-gaps': {
+      id: '/_authenticated/hr/skill-gaps'
+      path: '/hr/skill-gaps'
+      fullPath: '/hr/skill-gaps'
+      preLoaderRoute: typeof AuthenticatedHrSkillGapsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr/skills': {
+      id: '/_authenticated/hr/skills'
+      path: '/hr/skills'
+      fullPath: '/hr/skills'
+      preLoaderRoute: typeof AuthenticatedHrSkillsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr/talent-search': {
+      id: '/_authenticated/hr/talent-search'
+      path: '/hr/talent-search'
+      fullPath: '/hr/talent-search'
+      preLoaderRoute: typeof AuthenticatedHrTalentSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/roles/': {
+      id: '/_authenticated/roles/'
+      path: '/roles'
+      fullPath: '/roles/'
+      preLoaderRoute: typeof AuthenticatedRolesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/roles/$roleId': {
+      id: '/_authenticated/roles/$roleId'
+      path: '/roles/$roleId'
+      fullPath: '/roles/$roleId'
+      preLoaderRoute: typeof AuthenticatedRolesRoleIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/talent-discovery/': {
+      id: '/_authenticated/talent-discovery/'
+      path: '/talent-discovery'
+      fullPath: '/talent-discovery/'
+      preLoaderRoute: typeof AuthenticatedTalentDiscoveryIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/talent-discovery/assessment': {
+      id: '/_authenticated/talent-discovery/assessment'
+      path: '/talent-discovery/assessment'
+      fullPath: '/talent-discovery/assessment'
+      preLoaderRoute: typeof AuthenticatedTalentDiscoveryAssessmentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/talent-discovery/results': {
+      id: '/_authenticated/talent-discovery/results'
+      path: '/talent-discovery/results'
+      fullPath: '/talent-discovery/results'
+      preLoaderRoute: typeof AuthenticatedTalentDiscoveryResultsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCareerAssistantRoute: typeof AuthenticatedCareerAssistantRoute
+  AuthenticatedCareerRoadmapRoute: typeof AuthenticatedCareerRoadmapRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedLearningRoute: typeof AuthenticatedLearningRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSkillGapsRoute: typeof AuthenticatedSkillGapsRoute
+  AuthenticatedHrEmergingSkillsRoute: typeof AuthenticatedHrEmergingSkillsRoute
+  AuthenticatedHrInternalMobilityRoute: typeof AuthenticatedHrInternalMobilityRoute
+  AuthenticatedHrSkillGapsRoute: typeof AuthenticatedHrSkillGapsRoute
+  AuthenticatedHrSkillsRoute: typeof AuthenticatedHrSkillsRoute
+  AuthenticatedHrTalentSearchRoute: typeof AuthenticatedHrTalentSearchRoute
+  AuthenticatedRolesRoleIdRoute: typeof AuthenticatedRolesRoleIdRoute
+  AuthenticatedTalentDiscoveryAssessmentRoute: typeof AuthenticatedTalentDiscoveryAssessmentRoute
+  AuthenticatedTalentDiscoveryResultsRoute: typeof AuthenticatedTalentDiscoveryResultsRoute
+  AuthenticatedHrIndexRoute: typeof AuthenticatedHrIndexRoute
+  AuthenticatedRolesIndexRoute: typeof AuthenticatedRolesIndexRoute
+  AuthenticatedTalentDiscoveryIndexRoute: typeof AuthenticatedTalentDiscoveryIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCareerAssistantRoute: AuthenticatedCareerAssistantRoute,
+  AuthenticatedCareerRoadmapRoute: AuthenticatedCareerRoadmapRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedLearningRoute: AuthenticatedLearningRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSkillGapsRoute: AuthenticatedSkillGapsRoute,
+  AuthenticatedHrEmergingSkillsRoute: AuthenticatedHrEmergingSkillsRoute,
+  AuthenticatedHrInternalMobilityRoute: AuthenticatedHrInternalMobilityRoute,
+  AuthenticatedHrSkillGapsRoute: AuthenticatedHrSkillGapsRoute,
+  AuthenticatedHrSkillsRoute: AuthenticatedHrSkillsRoute,
+  AuthenticatedHrTalentSearchRoute: AuthenticatedHrTalentSearchRoute,
+  AuthenticatedRolesRoleIdRoute: AuthenticatedRolesRoleIdRoute,
+  AuthenticatedTalentDiscoveryAssessmentRoute:
+    AuthenticatedTalentDiscoveryAssessmentRoute,
+  AuthenticatedTalentDiscoveryResultsRoute:
+    AuthenticatedTalentDiscoveryResultsRoute,
+  AuthenticatedHrIndexRoute: AuthenticatedHrIndexRoute,
+  AuthenticatedRolesIndexRoute: AuthenticatedRolesIndexRoute,
+  AuthenticatedTalentDiscoveryIndexRoute:
+    AuthenticatedTalentDiscoveryIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

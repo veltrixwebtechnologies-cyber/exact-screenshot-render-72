@@ -9,13 +9,13 @@ export const TOTAL_QUESTIONS = 10;
 type SupabaseCtx = { supabase: any; userId: string };
 
 interface EmployeeContext {
-  employee: Record<string, any>;
+  employee: any;
   skills: Array<{ name: string; proficiency: number; source: string; evidence: string | null }>;
-  projects: Array<Record<string, any>>;
-  achievements: Array<Record<string, any>>;
-  certifications: Array<Record<string, any>>;
-  learning: Array<Record<string, any>>;
-  insights: Array<Record<string, any>>;
+  projects: any[];
+  achievements: any[];
+  certifications: any[];
+  learning: any[];
+  insights: any[];
 }
 
 async function loadEmployeeContext(
@@ -476,7 +476,7 @@ export const talentSearch = createServerFn({ method: "POST" })
         ctx.supabase.from("achievements").select("employee_id, title, impact"),
       ]);
 
-    const dossiers = (employees ?? []).map((e: any) => {
+    const dossiers: any[] = ((employees ?? []) as any[]).map((e: any) => {
       const empSkills = (skills ?? []).filter((s: any) => s.employee_id === e.id).map((s: any) => s.skills?.name).filter(Boolean);
       const empProjects = (projects ?? []).filter((p: any) => p.employee_id === e.id);
       const empInsights = (insights ?? []).filter((i: any) => i.employee_id === e.id);
@@ -486,7 +486,7 @@ export const talentSearch = createServerFn({ method: "POST" })
 
     const corpus = dossiers
       .map(
-        (d) =>
+        (d: any) =>
           `ID: ${d.employee.id}
 Name: ${d.employee.name} | ${d.employee.job_title} | ${d.employee.department} | ${d.employee.location}
 Summary: ${d.employee.profile_summary ?? ""}
@@ -516,7 +516,7 @@ Return ONLY JSON:
     const ranked = parseJSON<Array<{ id: string; reasons?: string[]; relevance?: string; suggested_roles?: string[] }>>(raw);
 
     if (Array.isArray(ranked) && ranked.length) {
-      const byId = new Map(dossiers.map((d) => [d.employee.id, d]));
+      const byId = new Map(dossiers.map((d: any) => [d.employee.id, d]));
       const results = ranked
         .filter((r) => byId.has(r.id))
         .map((r) => {
@@ -537,7 +537,7 @@ Return ONLY JSON:
     // Keyword fallback across skills, capabilities, projects and summary.
     const terms = data.query.toLowerCase().split(/[^a-z0-9+#.]+/).filter((t) => t.length > 2);
     const scored = dossiers
-      .map((d) => {
+      .map((d: any) => {
         const haystack = [
           d.employee.name,
           d.employee.job_title,
@@ -554,13 +554,13 @@ Return ONLY JSON:
         const hits = terms.filter((t) => haystack.includes(t));
         return { d, hits };
       })
-      .filter((row) => row.hits.length > 0)
-      .sort((a, b) => b.hits.length - a.hits.length)
+      .filter((row: any) => row.hits.length > 0)
+      .sort((a: any, b: any) => b.hits.length - a.hits.length)
       .slice(0, 6);
 
     return {
       mode: "keyword" as const,
-      results: scored.map(({ d, hits }) => ({
+      results: scored.map(({ d, hits }: any) => ({
         employee: d.employee,
         skills: d.empSkills,
         capabilities: d.empInsights.map((i: any) => ({ capability: i.capability, confidence: Number(i.confidence) })),
