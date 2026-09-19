@@ -66,13 +66,26 @@ export function useMe() {
       const roleRows = await supabase.from("user_roles").select("role").eq("user_id", user.id);
       roles = (roleRows.data ?? []).map((r: { role: string }) => r.role);
 
+      // Only the signed-in person's own roles are readable, plus HR/admin
+      // membership. Filter to this user so a colleague's staff row is never
+      // mistaken for our own access level.
+      roles = (roleRows.data ?? []).map((r: { role: string }) => r.role);
+
       if (roles.length === 0) {
         const desired = meta.desired_role === "hr" ? "hr" : "employee";
-        const inserted = await supabase
+        // HR can only be self-claimed while the organisation has no staff yet;
+        // the database rejects it otherwise, so fall back to employee.
+        let inserted = await supabase
           .from("user_roles")
           .insert({ user_id: user.id, role: desired })
           .select("role");
-        roles = (inserted.data ?? [{ role: desired }]).map((r: { role: string }) => r.role);
+        if (inserted.error && desired !== "employee") {
+          inserted = await supabase
+            .from("user_roles")
+            .insert({ user_id: user.id, role: "employee" })
+            .select("role");
+        }
+        roles = (inserted.data ?? [{ role: "employee" }]).map((r: { role: string }) => r.role);
       }
 
       return {
