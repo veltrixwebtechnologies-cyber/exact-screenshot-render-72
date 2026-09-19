@@ -89,7 +89,7 @@ function BuildProfileFlow() {
         title="Connect your evidence"
         body="Resume, GitHub, projects, achievements, certifications and learning history. Nothing is read from GitHub unless you authorize it."
       >
-        {employeeId ? <ResumeAndGithubSection employeeId={employeeId} compact /> : null}
+        <ResumeAndGithubSection employeeId={employeeId} compact />
         <div className="flex flex-wrap items-center gap-2">
           <Chip tone={resumes?.length ? "success" : "outline"}>
             <FileUp aria-hidden className="size-3.5" />

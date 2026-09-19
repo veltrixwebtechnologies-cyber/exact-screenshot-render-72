@@ -54,7 +54,7 @@ export function ResumeAndGithubSection({
   employeeId,
   compact = false,
 }: {
-  employeeId: string;
+  employeeId?: string;
   compact?: boolean;
 }) {
   const queryClient = useQueryClient();
@@ -75,7 +75,9 @@ export function ResumeAndGithubSection({
 
   const resumes = useQuery({
     queryKey: ["resumes", employeeId],
+    enabled: Boolean(employeeId),
     queryFn: async () => {
+      if (!employeeId) return [];
       const { data, error } = await supabase
         .from("employee_resumes")
         .select("id, file_name, detected_github_username, created_at")
@@ -88,7 +90,9 @@ export function ResumeAndGithubSection({
 
   const evidence = useQuery({
     queryKey: ["github-evidence", employeeId],
+    enabled: Boolean(employeeId),
     queryFn: async () => {
+      if (!employeeId) return [];
       const { data, error } = await supabase
         .from("github_evidence")
         .select("*")
@@ -212,7 +216,7 @@ export function ResumeAndGithubSection({
             type="button"
             variant="outline"
             className="mt-3"
-            disabled={uploading}
+            disabled={uploading || !employeeId}
             onClick={() => fileInput.current?.click()}
           >
             {uploading ? "Reading resume…" : latestResume ? "Replace resume" : "Upload resume"}
@@ -231,7 +235,7 @@ export function ResumeAndGithubSection({
               type="button"
               variant="outline"
               className="mt-3"
-              disabled={sync.isPending}
+              disabled={sync.isPending || !employeeId}
               onClick={() => sync.mutate()}
             >
               {sync.isPending ? "Analyzing repositories…" : "Refresh GitHub evidence"}
@@ -240,7 +244,7 @@ export function ResumeAndGithubSection({
             <Button
               type="button"
               className="mt-3"
-              disabled={connect.isPending}
+              disabled={connect.isPending || !employeeId}
               onClick={() => connect.mutate()}
             >
               {connect.isPending ? "Waiting for GitHub…" : "Connect GitHub"}
