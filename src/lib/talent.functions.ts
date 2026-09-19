@@ -2,6 +2,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 import { pickFallbackQuestion, QUESTION_BANK, type BankQuestion } from "./question-bank";
+import {
+  deriveHypotheses,
+  groundedFallbackQuestion,
+  hypothesesToText,
+  typeForStep,
+  type CapabilityHypothesis,
+  type QuestionType,
+} from "./hypotheses";
 import { callAI, parseJSON } from "./ai.server";
 
 export const TOTAL_QUESTIONS = 10;
@@ -16,6 +24,8 @@ interface EmployeeContext {
   certifications: any[];
   learning: any[];
   insights: any[];
+  github: any[];
+  resumes: any[];
 }
 
 async function loadEmployeeContext(
@@ -23,7 +33,7 @@ async function loadEmployeeContext(
   employeeId: string,
 ): Promise<EmployeeContext | null> {
   const { supabase } = ctx;
-  const [employee, skills, projects, achievements, certifications, learning, insights] =
+  const [employee, skills, projects, achievements, certifications, learning, insights, github, resumes] =
     await Promise.all([
       supabase.from("employees").select("*").eq("id", employeeId).maybeSingle(),
       supabase
@@ -35,6 +45,13 @@ async function loadEmployeeContext(
       supabase.from("certifications").select("*").eq("employee_id", employeeId),
       supabase.from("learning_records").select("*").eq("employee_id", employeeId),
       supabase.from("talent_insights").select("*").eq("employee_id", employeeId),
+      supabase.from("github_evidence").select("*").eq("employee_id", employeeId),
+      supabase
+        .from("employee_resumes")
+        .select("file_name, extracted_text, created_at")
+        .eq("employee_id", employeeId)
+        .order("created_at", { ascending: false })
+        .limit(1),
     ]);
 
   if (!employee.data) return null;
@@ -52,8 +69,23 @@ async function loadEmployeeContext(
     certifications: certifications.data ?? [],
     learning: learning.data ?? [],
     insights: insights.data ?? [],
+    github: github.data ?? [],
+    resumes: resumes.data ?? [],
   };
 }
+
+function hypothesesFor(context: EmployeeContext | null): CapabilityHypothesis[] {
+  if (!context) return [];
+  return deriveHypotheses({
+    github: context.github as any[],
+    projects: context.projects as any[],
+    achievements: context.achievements as any[],
+    certifications: context.certifications as any[],
+    learning: context.learning as any[],
+    resumeText: context.resumes[0]?.extracted_text ?? null,
+  });
+}
+
 
 function contextToText(context: EmployeeContext): string {
   const e = context.employee;
