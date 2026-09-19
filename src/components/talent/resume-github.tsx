@@ -13,6 +13,7 @@ import {
   syncGithubEvidence,
 } from "@/lib/github.functions";
 import { processResume } from "@/lib/resume.functions";
+import { githubStats, type GithubEvidenceRow } from "@/lib/evidence";
 import { startGithubConnect } from "@/lib/github.functions";
 
 function waitForOAuthCompletion(popup: Window) {
@@ -180,7 +181,8 @@ export function ResumeAndGithubSection({ employeeId }: { employeeId: string }) {
   const latestResume = resumes.data?.[0];
   const detected = latestResume?.detected_github_username ?? null;
   const connected = status.data?.connected === true;
-  const rows = evidence.data ?? [];
+  const rows = (evidence.data ?? []) as unknown as GithubEvidenceRow[];
+  const stats = githubStats(rows);
 
   return (
     <section className="space-y-8">
