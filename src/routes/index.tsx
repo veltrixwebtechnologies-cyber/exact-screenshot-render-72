@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Compass, LineChart, Search, Sparkles, Target } from "lucide-react";
 
-import heroImage from "@/assets/talentiq-hero.jpg";
+import { LandingPreview } from "@/components/landing-preview";
 import logoMark from "@/assets/talentmap-mark.png.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -114,14 +114,8 @@ function Landing() {
             </div>
           </div>
 
-          <div className="panel mt-14 overflow-hidden p-2">
-            <img
-              src={heroImage}
-              alt="TalentMap AI workforce dashboard with a capability profile card"
-              width={1600}
-              height={1104}
-              className="w-full rounded-lg"
-            />
+          <div className="mt-14">
+            <LandingPreview />
           </div>
         </div>
       </section>
