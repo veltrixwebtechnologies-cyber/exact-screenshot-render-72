@@ -30,6 +30,7 @@ import { Route as AuthenticatedRolesRoleIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedTalentDiscoveryIndexRouteImport } from './routes/_authenticated/talent-discovery.index'
 import { Route as AuthenticatedTalentDiscoveryAssessmentRouteImport } from './routes/_authenticated/talent-discovery.assessment'
 import { Route as AuthenticatedTalentDiscoveryResultsRouteImport } from './routes/_authenticated/talent-discovery.results'
+import { Route as OauthGithubReturnRouteImport } from './routes/oauth/github/return'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -145,6 +146,11 @@ const AuthenticatedTalentDiscoveryResultsRoute =
     path: '/talent-discovery/results',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const OauthGithubReturnRoute = OauthGithubReturnRouteImport.update({
+  id: '/oauth/github/return',
+  path: '/oauth/github/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
   '/talent-discovery/assessment': typeof AuthenticatedTalentDiscoveryAssessmentRoute
   '/talent-discovery/results': typeof AuthenticatedTalentDiscoveryResultsRoute
+  '/oauth/github/return': typeof OauthGithubReturnRoute
   '/hr/': typeof AuthenticatedHrIndexRoute
   '/roles/': typeof AuthenticatedRolesIndexRoute
   '/talent-discovery/': typeof AuthenticatedTalentDiscoveryIndexRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
   '/talent-discovery/assessment': typeof AuthenticatedTalentDiscoveryAssessmentRoute
   '/talent-discovery/results': typeof AuthenticatedTalentDiscoveryResultsRoute
+  '/oauth/github/return': typeof OauthGithubReturnRoute
   '/hr': typeof AuthenticatedHrIndexRoute
   '/roles': typeof AuthenticatedRolesIndexRoute
   '/talent-discovery': typeof AuthenticatedTalentDiscoveryIndexRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/_authenticated/roles/$roleId': typeof AuthenticatedRolesRoleIdRoute
   '/_authenticated/talent-discovery/assessment': typeof AuthenticatedTalentDiscoveryAssessmentRoute
   '/_authenticated/talent-discovery/results': typeof AuthenticatedTalentDiscoveryResultsRoute
+  '/oauth/github/return': typeof OauthGithubReturnRoute
   '/_authenticated/hr/': typeof AuthenticatedHrIndexRoute
   '/_authenticated/roles/': typeof AuthenticatedRolesIndexRoute
   '/_authenticated/talent-discovery/': typeof AuthenticatedTalentDiscoveryIndexRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/roles/$roleId'
     | '/talent-discovery/assessment'
     | '/talent-discovery/results'
+    | '/oauth/github/return'
     | '/hr/'
     | '/roles/'
     | '/talent-discovery/'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/roles/$roleId'
     | '/talent-discovery/assessment'
     | '/talent-discovery/results'
+    | '/oauth/github/return'
     | '/hr'
     | '/roles'
     | '/talent-discovery'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/_authenticated/roles/$roleId'
     | '/_authenticated/talent-discovery/assessment'
     | '/_authenticated/talent-discovery/results'
+    | '/oauth/github/return'
     | '/_authenticated/hr/'
     | '/_authenticated/roles/'
     | '/_authenticated/talent-discovery/'
@@ -288,6 +300,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  OauthGithubReturnRoute: typeof OauthGithubReturnRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -439,6 +452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTalentDiscoveryResultsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/oauth/github/return': {
+      id: '/oauth/github/return'
+      path: '/oauth/github/return'
+      fullPath: '/oauth/github/return'
+      preLoaderRoute: typeof OauthGithubReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -494,6 +514,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  OauthGithubReturnRoute: OauthGithubReturnRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
