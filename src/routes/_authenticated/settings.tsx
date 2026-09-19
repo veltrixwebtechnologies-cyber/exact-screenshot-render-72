@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/hooks/useMe";
@@ -54,16 +56,100 @@ function SettingsPage() {
         </div>
       </section>
 
+      {me.roles.includes("admin") ? <TeamAccess /> : <StaffNote />}
+
       <section>
         <SectionTitle
           title="Who can see what"
-          description="Your profile, skills and capability insights are visible to signed-in colleagues and to HR. Only you can edit your own record; HR can publish internal roles."
+          description="Your profile, skills, evidence and capability insights are visible only to you and to HR or admin accounts. Colleagues cannot read your record. Only you can edit it; HR publishes internal roles."
         />
         <Button variant="outline" onClick={signOut}>
           Sign out
         </Button>
       </section>
     </div>
+  );
+}
+
+function StaffNote() {
+  return (
+    <section>
+      <SectionTitle
+        title="HR access"
+        description="Workforce intelligence is limited to HR and admin accounts. Access can only be granted by an admin in your organisation — it is never self-assigned."
+      />
+    </section>
+  );
+}
+
+/**
+ * Admin-only: grant HR access to a colleague. The database enforces that only
+ * admins may write privileged roles; this panel is the UI for that permission.
+ */
+function TeamAccess() {
+  const queryClient = useQueryClient();
+  const [pending, setPending] = useState<string | null>(null);
+  const people = useQuery({
+    queryKey: ["team-access"],
+    staleTime: 30_000,
+    queryFn: async () => {
+      const [{ data: employees, error }, { data: staff }] = await Promise.all([
+        supabase.from("employees").select("id,name,email,user_id,job_title").order("name"),
+        supabase.from("user_roles").select("user_id,role").in("role", ["hr", "admin"]),
+      ]);
+      if (error) throw error;
+      const staffIds = new Set((staff ?? []).map((r: { user_id: string }) => r.user_id));
+      return (employees ?? [])
+        .filter((e: { user_id: string | null }) => Boolean(e.user_id))
+        .map((e: { id: string; name: string; email: string | null; user_id: string | null; job_title: string | null }) => ({
+          ...e,
+          isStaff: staffIds.has(e.user_id as string),
+        }));
+    },
+  });
+
+  async function grantHr(userId: string) {
+    setPending(userId);
+    const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: "hr" });
+    setPending(null);
+    if (error) {
+      toast.error("That access level could not be granted.");
+      return;
+    }
+    toast.success("HR access granted.");
+    await queryClient.invalidateQueries({ queryKey: ["team-access"] });
+  }
+
+  return (
+    <section className="panel space-y-4 p-6">
+      <SectionTitle
+        title="Team access"
+        description="As an admin you can give colleagues HR access to workforce intelligence. Nobody can grant it to themselves."
+      />
+      {people.isLoading ? <Skeleton className="h-24 w-full" /> : null}
+      <div className="space-y-2">
+        {(people.data ?? []).map((person) => (
+          <div key={person.id} className="flex items-center justify-between gap-4 rounded-lg border p-3">
+            <div>
+              <p className="text-sm font-medium">{person.name}</p>
+              <p className="text-xs text-muted-foreground">{person.email ?? person.job_title ?? "—"}</p>
+            </div>
+            {person.isStaff ? (
+              <Chip tone="primary">HR access</Chip>
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={pending === person.user_id}
+                onClick={() => grantHr(person.user_id as string)}
+              >
+                {pending === person.user_id ? "Granting…" : "Grant HR access"}
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
