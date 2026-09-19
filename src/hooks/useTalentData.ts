@@ -109,6 +109,38 @@ export function useEmployeeBundle(employeeId: string | undefined) {
   });
 }
 
+export function useGithubEvidence(employeeId: string | undefined) {
+  return useQuery<GithubEvidenceRow[]>({
+    queryKey: ["github-evidence", employeeId],
+    enabled: Boolean(employeeId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("github_evidence")
+        .select("*")
+        .eq("employee_id", employeeId!)
+        .order("last_pushed_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as GithubEvidenceRow[];
+    },
+  });
+}
+
+export function useResumes(employeeId: string | undefined) {
+  return useQuery({
+    queryKey: ["resumes", employeeId],
+    enabled: Boolean(employeeId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("employee_resumes")
+        .select("id, file_name, detected_github_username, created_at")
+        .eq("employee_id", employeeId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
 export function useInternalRoles() {
   return useQuery<RoleLike[]>({
     queryKey: ["internal-roles"],
