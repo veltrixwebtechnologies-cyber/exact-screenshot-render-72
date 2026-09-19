@@ -53,7 +53,7 @@ describe("matchBreakdown", () => {
     const result = matchBreakdown(role, [skill("React", "GitHub evidence", 4), skill("System Design", "Profile", 2)], [
       "Mentoring",
     ]);
-    expect(result.strong.map((s) => s.skill)).toContain("React");
+    expect(result.strong.map((s) => s.name)).toContain("React");
     expect([...result.transferable.map((s) => s.skill), ...result.gaps]).toContain("Mentoring");
     expect(result.strong.length + result.transferable.length + result.gaps.length).toBe(3);
   });
