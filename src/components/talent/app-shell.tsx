@@ -22,7 +22,7 @@ import {
 
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/hooks/useMe";
-import { cn } from "@/lib/utils";
+import logoMark from "@/assets/talentmap-mark.png.asset.json";
 
 const employeeNav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -175,10 +175,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 function Brand() {
   return (
     <div className="flex h-14 items-center gap-2 px-5">
-      <span className={cn("grid size-7 place-items-center rounded-md bg-primary text-primary-foreground")}>
-        <Sparkles aria-hidden className="size-4" />
-      </span>
-      <span className="text-sm font-semibold tracking-tight">TalentIQ</span>
+      <img src={logoMark.url} alt="" className="size-7 rounded-md object-contain" />
+      <span className="text-sm font-semibold tracking-tight">TalentMap AI</span>
     </div>
   );
 }

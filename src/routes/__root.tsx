@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TalentIQ — AI-powered talent discovery" },
+      { title: "TalentMap AI — Discover your hidden potential" },
       {
         name: "description",
         content:
-          "TalentIQ helps companies discover the real capabilities of their people, match them to internal roles and close skill gaps.",
+          "TalentMap AI helps companies discover the real capabilities of their people, match them to internal roles and close skill gaps.",
       },
-      { property: "og:title", content: "TalentIQ — AI-powered talent discovery" },
+      { property: "og:title", content: "TalentMap AI — Discover your hidden potential" },
       {
         property: "og:description",
         content:
@@ -102,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
