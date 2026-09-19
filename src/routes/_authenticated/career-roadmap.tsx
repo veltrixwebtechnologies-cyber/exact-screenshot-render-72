@@ -5,6 +5,7 @@ import { useMe } from "@/hooks/useMe";
 import { useEmployeeBundle, useInternalRoles } from "@/hooks/useTalentData";
 import { matchRole, skillGaps, type RoleLike } from "@/lib/talent";
 import { AIDisclosure, Chip, PageHeader } from "@/components/talent/primitives";
+import { CareerGraph, CoverageBar } from "@/components/talent/career-graph";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -75,6 +76,56 @@ function RoadmapPage() {
           </Select>
         }
       />
+
+      <CareerGraph
+        currentRole={me.employee.job_title ?? "Current role"}
+        branches={ranked.slice(0, 4)}
+        selectedId={destination?.id ?? null}
+        onSelect={setDestinationId}
+      />
+
+      {destination ? (
+        <section className="panel space-y-5 p-6">
+          <div>
+            <p className="eyebrow">Selected destination</p>
+            <h2 className="mt-1 text-base font-semibold">{destination.title}</h2>
+          </div>
+          {(() => {
+            const rows = skillGaps(destination, skills);
+            const total = rows.length || 1;
+            const covered = rows.filter((row) => row.gap === 0).length;
+            const missing = rows.filter((row) => row.gap > 0);
+            return (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <CoverageBar label="Current capabilities" value={covered / total} />
+                  <CoverageBar
+                    label="Missing capabilities"
+                    value={missing.length / total}
+                    tone="warning"
+                  />
+                </div>
+                <div>
+                  <p className="eyebrow">Recommended next steps</p>
+                  <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+                    {missing.slice(0, 3).map((row) => (
+                      <li key={row.skill}>
+                        → Take on a project or course that builds {row.skill} (level{" "}
+                        {row.currentLevel}/5 today, {row.requiredLevel}/5 expected)
+                      </li>
+                    ))}
+                    {missing.length ? (
+                      <li>→ Pair with someone strong in {missing[0]?.skill} for regular feedback</li>
+                    ) : (
+                      <li>→ Your recorded evidence already covers this destination's requirements</li>
+                    )}
+                  </ul>
+                </div>
+              </>
+            );
+          })()}
+        </section>
+      ) : null}
 
       <ol className="space-y-4">
         {steps.map((step, index) => {
