@@ -84,7 +84,7 @@ function Landing() {
               to="/auth"
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Open the workspace
+              Build my capability profile
               <ArrowRight aria-hidden className="size-4" />
             </Link>
             <Link
@@ -92,8 +92,26 @@ function Landing() {
               className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
             >
               <Search aria-hidden className="size-4" />
-              Explore HR intelligence
+              Explore for HR
+              <ArrowRight aria-hidden className="size-4" />
             </Link>
+          </div>
+
+          <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-2">
+            <div className="panel p-4">
+              <p className="eyebrow">If you are an employee</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Show me what I&apos;m capable of — and prove why you think so. Discover capabilities,
+                find internal roles, develop the missing skills.
+              </p>
+            </div>
+            <div className="panel p-4">
+              <p className="eyebrow">If you are in HR</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Workforce skill intelligence, evidence-backed talent matching and the skill gaps
+                forming across your teams.
+              </p>
+            </div>
           </div>
 
           <div className="panel mt-14 overflow-hidden p-2">
