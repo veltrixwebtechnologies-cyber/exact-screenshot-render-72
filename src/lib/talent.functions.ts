@@ -465,9 +465,13 @@ Confidence is 0.4-0.9 and must be lower when the only support is interview answe
         }
       }
       const evidenceBullets = [
+        ...(employeeContext?.github ?? []).map(
+          (g: any) => `GitHub: ${g.repo_name} — ${(g.detected_tech ?? []).slice(0, 4).join(", ") || "analysed repository"}`,
+        ),
         ...(employeeContext?.projects ?? []).map((p) => `${p.title}: ${p.role ?? "contributor"}`),
         ...(employeeContext?.achievements ?? []).map((a) => a.title),
       ].slice(0, 4);
+
 
       insights = [...counts.entries()]
         .sort((a, b) => b[1] - a[1])
