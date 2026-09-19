@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/talent-discovery/")({
       },
     ],
   }),
-  component: BuildProfileFlow;
+  component: BuildProfileFlow,
 });
 
 function BuildProfileFlow() {
