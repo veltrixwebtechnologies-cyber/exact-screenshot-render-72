@@ -278,6 +278,43 @@ export function ResumeAndGithubSection({ employeeId }: { employeeId: string }) {
             )}
           </div>
 
+          {connected && rows.length ? (
+            <>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <Metric label="Repositories analyzed" value={stats.repos} />
+                <Metric label="Languages detected" value={stats.languages.length} />
+                <Metric label="Active projects" value={stats.activeProjects} />
+                <Metric label="Stars on your work" value={stats.stars} />
+              </div>
+
+              <div>
+                <p className="eyebrow">Technical signals</p>
+                <div className="mt-3 space-y-2.5">
+                  {stats.signals.slice(0, 6).map((signal) => (
+                    <div key={signal.tech} className="space-y-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium">{signal.tech}</span>
+                        <span className="font-mono tabular-nums text-muted-foreground">
+                          {signal.repos} of {stats.repos} repositories
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary"
+                          style={{ width: `${Math.round(signal.strength * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                  Bars show how widely each technology appears across your authorized repositories —
+                  evidence contributing to the assessment, not proof of proficiency on its own.
+                </p>
+              </div>
+            </>
+          ) : null}
+
           {connected && rows.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No repository evidence yet — run “Refresh GitHub evidence”.
