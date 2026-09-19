@@ -56,7 +56,7 @@ function SettingsPage() {
         </div>
       </section>
 
-      {!me.isStaff ? <StaffSetup /> : null}
+      {me.roles.includes("admin") ? <TeamAccess /> : <StaffNote />}
 
       <section>
         <SectionTitle
@@ -71,62 +71,84 @@ function SettingsPage() {
   );
 }
 
+function StaffNote() {
+  return (
+    <section>
+      <SectionTitle
+        title="HR access"
+        description="Workforce intelligence is limited to HR and admin accounts. Access can only be granted by an admin in your organisation — it is never self-assigned."
+      />
+    </section>
+  );
+}
+
 /**
- * Organisation setup: HR access can only be self-claimed while no HR or admin
- * account exists yet. After that, an admin has to grant it (enforced in the
- * database, not here).
+ * Admin-only: grant HR access to a colleague. The database enforces that only
+ * admins may write privileged roles; this panel is the UI for that permission.
  */
-function StaffSetup() {
+function TeamAccess() {
   const queryClient = useQueryClient();
-  const [pending, setPending] = useState(false);
-  const staffQuery = useQuery({
-    queryKey: ["staff-exists"],
-    staleTime: 60_000,
+  const [pending, setPending] = useState<string | null>(null);
+  const people = useQuery({
+    queryKey: ["team-access"],
+    staleTime: 30_000,
     queryFn: async () => {
-      const { count, error } = await supabase
-        .from("user_roles")
-        .select("id", { count: "exact", head: true })
-        .in("role", ["hr", "admin"]);
+      const [{ data: employees, error }, { data: staff }] = await Promise.all([
+        supabase.from("employees").select("id,name,email,user_id,job_title").order("name"),
+        supabase.from("user_roles").select("user_id,role").in("role", ["hr", "admin"]),
+      ]);
       if (error) throw error;
-      return (count ?? 0) > 0;
+      const staffIds = new Set((staff ?? []).map((r: { user_id: string }) => r.user_id));
+      return (employees ?? [])
+        .filter((e: { user_id: string | null }) => Boolean(e.user_id))
+        .map((e: { id: string; name: string; email: string | null; user_id: string | null; job_title: string | null }) => ({
+          ...e,
+          isStaff: staffIds.has(e.user_id as string),
+        }));
     },
   });
 
-  if (staffQuery.isLoading || staffQuery.data !== false) {
-    return (
-      <section>
-        <SectionTitle
-          title="HR access"
-          description="Workforce intelligence is limited to HR and admin accounts. Ask an admin in your organisation to grant you HR access."
-        />
-      </section>
-    );
-  }
-
-  async function claimHr() {
-    setPending(true);
-    const { error } = await supabase.from("user_roles").insert({
-      user_id: (await supabase.auth.getUser()).data.user?.id ?? "",
-      role: "hr",
-    });
-    setPending(false);
+  async function grantHr(userId: string) {
+    setPending(userId);
+    const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: "hr" });
+    setPending(null);
     if (error) {
-      toast.error("HR access could not be granted. An admin already exists in this organisation.");
+      toast.error("That access level could not be granted.");
       return;
     }
-    toast.success("HR access granted. Workforce intelligence is now available.");
-    await queryClient.invalidateQueries();
+    toast.success("HR access granted.");
+    await queryClient.invalidateQueries({ queryKey: ["team-access"] });
   }
 
   return (
-    <section className="panel space-y-3 p-6">
+    <section className="panel space-y-4 p-6">
       <SectionTitle
-        title="Set up HR access"
-        description="No HR or admin account exists in this organisation yet, so you can claim HR access as the first administrator. Once that is done, only admins can grant it to anyone else."
+        title="Team access"
+        description="As an admin you can give colleagues HR access to workforce intelligence. Nobody can grant it to themselves."
       />
-      <Button onClick={claimHr} disabled={pending}>
-        {pending ? "Granting…" : "Claim HR access"}
-      </Button>
+      {people.isLoading ? <Skeleton className="h-24 w-full" /> : null}
+      <div className="space-y-2">
+        {(people.data ?? []).map((person) => (
+          <div key={person.id} className="flex items-center justify-between gap-4 rounded-lg border p-3">
+            <div>
+              <p className="text-sm font-medium">{person.name}</p>
+              <p className="text-xs text-muted-foreground">{person.email ?? person.job_title ?? "—"}</p>
+            </div>
+            {person.isStaff ? (
+              <Chip tone="primary">HR access</Chip>
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={pending === person.user_id}
+                onClick={() => grantHr(person.user_id as string)}
+              >
+                {pending === person.user_id ? "Granting…" : "Grant HR access"}
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
