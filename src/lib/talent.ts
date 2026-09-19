@@ -14,6 +14,7 @@ export interface RoleLike {
 
 export interface SkillHolding {
   name: string;
+  category?: string | null;
   proficiency: number;
   confidence: number;
   source: string;
