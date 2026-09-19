@@ -82,7 +82,7 @@ describe("githubStats", () => {
       } as never,
     ]);
     expect(stats.repos).toBe(2);
-    expect(stats.languages).toBe(2);
+    expect(stats.languages).toEqual(["TypeScript", "Python"]);
     expect(stats.activeProjects).toBe(1);
     expect(stats.stars).toBe(4);
     expect(stats.signals.every((s) => s.strength <= 1)).toBe(true);
