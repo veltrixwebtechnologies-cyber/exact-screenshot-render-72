@@ -50,7 +50,13 @@ function waitForOAuthCompletion(popup: Window) {
   });
 }
 
-export function ResumeAndGithubSection({ employeeId }: { employeeId: string }) {
+export function ResumeAndGithubSection({
+  employeeId,
+  compact = false,
+}: {
+  employeeId: string;
+  compact?: boolean;
+}) {
   const queryClient = useQueryClient();
   const fileInput = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -183,6 +189,67 @@ export function ResumeAndGithubSection({ employeeId }: { employeeId: string }) {
   const connected = status.data?.connected === true;
   const rows = (evidence.data ?? []) as unknown as GithubEvidenceRow[];
   const stats = githubStats(rows);
+
+  if (compact) {
+    return (
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-lg border border-border p-4">
+          <input
+            ref={fileInput}
+            type="file"
+            accept=".pdf,.txt,.md"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void onUpload(file);
+            }}
+          />
+          <p className="text-sm font-semibold">Resume</p>
+          <p className="mt-1 min-h-10 text-xs leading-relaxed text-muted-foreground">
+            {latestResume ? `Uploaded: ${latestResume.file_name}` : "Upload a PDF or text resume for private analysis."}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-3"
+            disabled={uploading}
+            onClick={() => fileInput.current?.click()}
+          >
+            {uploading ? "Reading resume…" : latestResume ? "Replace resume" : "Upload resume"}
+          </Button>
+        </div>
+
+        <div className="rounded-lg border border-border p-4">
+          <p className="text-sm font-semibold">GitHub</p>
+          <p className="mt-1 min-h-10 text-xs leading-relaxed text-muted-foreground">
+            {connected
+              ? `${status.data?.githubUsername ? `Connected as ${status.data.githubUsername}. ` : "Connected. "}${stats.repos} permitted repositories analyzed.`
+              : "Authorize access before TalentIQ reads any repository data."}
+          </p>
+          {connected ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-3"
+              disabled={sync.isPending}
+              onClick={() => sync.mutate()}
+            >
+              {sync.isPending ? "Analyzing repositories…" : "Refresh GitHub evidence"}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              className="mt-3"
+              disabled={connect.isPending}
+              onClick={() => connect.mutate()}
+            >
+              {connect.isPending ? "Waiting for GitHub…" : "Connect GitHub"}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section className="space-y-8">
