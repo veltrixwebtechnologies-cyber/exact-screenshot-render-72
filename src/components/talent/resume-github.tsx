@@ -54,7 +54,7 @@ export function ResumeAndGithubSection({
   employeeId,
   compact = false,
 }: {
-  employeeId?: string;
+  employeeId: string | undefined;
   compact?: boolean;
 }) {
   const queryClient = useQueryClient();
