@@ -439,16 +439,20 @@ export const completeAssessment = createServerFn({ method: "POST" })
 
     const prompt = `${LANGUAGE_RULES}
 
-Combine the assessment answers with the employee's recorded experience to identify potential capabilities.
+Combine ALL evidence sources (resume, GitHub repositories, projects, achievements, certifications, learning history) with the interview answers to identify potential capabilities. The interview validates evidence; it never proves a capability on its own.
+
+Capability hypotheses that were under test:
+${hypothesesToText(hypothesesFor(employeeContext))}
 
 ${employeeContext ? contextToText(employeeContext) : "no profile data"}
 
-Assessment answers:
+Interview answers:
 ${answers.map((r: any, i: number) => `${i + 1}. Q: ${r.question}\n   A: ${r.answer}\n   signals: ${(r.detected_signals ?? []).join(", ")}`).join("\n")}
 
 Return ONLY JSON of 3 to 5 items:
-[{"capability":"Leadership","confidence":0.78,"evidence":["short factual bullet drawn from the data"],"explanation":"We identified potential ... because ...","explore":["Role or area to explore"]}]
-Confidence is 0.4-0.9. Evidence bullets must come from the data above, never invented.`;
+[{"capability":"Leadership","confidence":0.78,"evidence":["short factual bullet naming the real source, e.g. 'GitHub: LocalShore — auth + PostgreSQL + payments'"],"explanation":"We identified potential ... because ...","explore":["Role or area to explore"]}]
+Confidence is 0.4-0.9 and must be lower when the only support is interview answers. Every evidence bullet must name its real source record from the data above, never invented.`;
+
 
     let insights = parseJSON<GeneratedInsight[]>(await callAI([{ role: "user", content: prompt }]));
 
