@@ -35,7 +35,7 @@ export function useMe() {
       const user = userData.user;
       if (!user) return null;
 
-      const meta = (user.user_metadata ?? {}) as Record<string, string | undefined>;
+      const meta = (user.user_metadata ?? {}) as any;
 
       let employee: Employee | null = null;
       const existing = await supabase
