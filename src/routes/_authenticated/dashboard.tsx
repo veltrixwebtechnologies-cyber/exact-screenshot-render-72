@@ -19,13 +19,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Your talent dashboard — TalentIQ" },
+      { title: "Your talent dashboard — TalentMap AI" },
       {
         name: "description",
         content:
           "See your strongest skills, potential capabilities, matching internal roles and what to learn next.",
       },
-      { property: "og:title", content: "Your talent dashboard — TalentIQ" },
+      { property: "og:title", content: "Your talent dashboard — TalentMap AI" },
       { property: "og:description", content: "Evidence-based talent intelligence for your career." },
     ],
   }),
@@ -108,7 +108,7 @@ function Dashboard() {
         {topSkills.length === 0 ? (
           <EmptyState
             title="No skills recorded yet"
-            description="Add your projects, achievements and certifications and TalentIQ will build your skill profile from them."
+            description="Add your projects, achievements and certifications and TalentMap AI will build your skill profile from them."
             action={
               <Link to="/profile" className="text-sm font-medium text-primary hover:underline">
                 Go to profile
@@ -140,7 +140,7 @@ function Dashboard() {
         {insights.length === 0 ? (
           <EmptyState
             title="No capability insights yet"
-            description="Run a discovery session and TalentIQ will combine your answers with your recorded experience."
+            description="Run a discovery session and TalentMap AI will combine your answers with your recorded experience."
             action={
               <Link to="/talent-discovery" className="text-sm font-medium text-primary hover:underline">
                 Start discovery
@@ -200,7 +200,7 @@ function Dashboard() {
             <div className="lg:col-span-2">
               <EmptyState
                 title="No recommendations yet"
-                description="Pick a target role on the skill gaps page and TalentIQ will build a development plan from the gaps."
+                description="Pick a target role on the skill gaps page and TalentMap AI will build a development plan from the gaps."
                 action={
                   <Link to="/skill-gaps" className="text-sm font-medium text-primary hover:underline">
                     Analyse skill gaps

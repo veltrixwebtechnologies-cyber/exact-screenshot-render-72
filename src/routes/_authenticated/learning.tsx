@@ -19,12 +19,12 @@ import {
 export const Route = createFileRoute("/_authenticated/learning")({
   head: () => ({
     meta: [
-      { title: "Learning plan — TalentIQ" },
+      { title: "Learning plan — TalentMap AI" },
       {
         name: "description",
         content: "Courses, projects, mentoring and certifications recommended from your actual skill gaps.",
       },
-      { property: "og:title", content: "Learning plan — TalentIQ" },
+      { property: "og:title", content: "Learning plan — TalentMap AI" },
       { property: "og:description", content: "Learning tied to the gaps that matter." },
     ],
   }),

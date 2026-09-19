@@ -13,13 +13,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/talent-discovery/")({
   head: () => ({
     meta: [
-      { title: "Build your capability profile — TalentIQ" },
+      { title: "Build your capability profile — TalentMap AI" },
       {
         name: "description",
         content:
-          "Connect your evidence, let TalentIQ extract it, answer an adaptive interview and see the capabilities it can defend.",
+          "Connect your evidence, let TalentMap AI extract it, answer an adaptive interview and see the capabilities it can defend.",
       },
-      { property: "og:title", content: "Build your capability profile — TalentIQ" },
+      { property: "og:title", content: "Build your capability profile — TalentMap AI" },
       {
         property: "og:description",
         content: "Connect, extract, interview, profile — evidence-based capability discovery.",
@@ -71,7 +71,7 @@ function BuildProfileFlow() {
       <PageHeader
         eyebrow="Discover"
         title="Build your capability profile"
-        description="Four steps: connect your evidence, let TalentIQ read it, answer an adaptive interview, then see what it can defend — and why."
+        description="Four steps: connect your evidence, let TalentMap AI read it, answer an adaptive interview, then see what it can defend — and why."
         actions={
           <Link
             to="/talent-discovery/assessment"
@@ -115,7 +115,7 @@ function BuildProfileFlow() {
         index={2}
         done={hasExtraction}
         title="AI evidence extraction"
-        body="What TalentIQ can currently see across everything you have connected."
+        body="What TalentMap AI can currently see across everything you have connected."
       >
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {extraction.map((row) => (

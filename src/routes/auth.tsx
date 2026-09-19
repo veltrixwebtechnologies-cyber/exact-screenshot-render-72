@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import logoMark from "@/assets/talentmap-mark.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,12 +12,12 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — TalentIQ" },
+      { title: "Sign in — TalentMap AI" },
       {
         name: "description",
-        content: "Sign in to TalentIQ to discover capabilities, internal roles and career paths.",
+        content: "Sign in to TalentMap AI to discover capabilities, internal roles and career paths.",
       },
-      { property: "og:title", content: "Sign in — TalentIQ" },
+      { property: "og:title", content: "Sign in — TalentMap AI" },
       {
         property: "og:description",
         content: "Access your talent intelligence workspace.",
@@ -97,17 +97,15 @@ function AuthPage() {
     <div className="grid min-h-screen lg:grid-cols-[1fr_1.1fr]">
       <div className="hidden flex-col justify-between border-r border-border bg-surface p-12 lg:flex">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground">
-            <Sparkles aria-hidden className="size-4" />
-          </span>
-          <span className="text-sm font-semibold">TalentIQ</span>
+          <img src={logoMark.url} alt="" className="size-7 rounded-md object-contain" />
+          <span className="text-sm font-semibold">TalentMap AI</span>
         </Link>
         <div className="max-w-md space-y-5">
           <h2 className="text-3xl font-semibold leading-tight">
             Discover what your people can actually do.
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            A job title rarely tells the whole story. TalentIQ combines projects, achievements,
+            A job title rarely tells the whole story. TalentMap AI combines projects, achievements,
             learning history and an adaptive interview to surface potential capabilities — always
             with the evidence behind them.
           </p>
@@ -126,7 +124,7 @@ function AuthPage() {
       <div className="flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
           <h1 className="text-xl font-semibold">
-            {mode === "signin" ? "Sign in to TalentIQ" : "Create your TalentIQ account"}
+            {mode === "signin" ? "Sign in to TalentMap AI" : "Create your TalentMap AI account"}
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
             {mode === "signin"
@@ -221,7 +219,7 @@ function AuthPage() {
               </Button>
 
               <p className="mt-6 text-center text-sm text-muted-foreground">
-                {mode === "signin" ? "New to TalentIQ?" : "Already have an account?"}{" "}
+                {mode === "signin" ? "New to TalentMap AI?" : "Already have an account?"}{" "}
                 <button
                   type="button"
                   className="font-medium text-primary hover:underline"

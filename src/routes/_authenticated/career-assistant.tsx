@@ -11,12 +11,12 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/_authenticated/career-assistant")({
   head: () => ({
     meta: [
-      { title: "Career AI — TalentIQ" },
+      { title: "Career AI — TalentMap AI" },
       {
         name: "description",
         content: "Ask about your own skills, capabilities, role matches and development options.",
       },
-      { property: "og:title", content: "Career AI — TalentIQ" },
+      { property: "og:title", content: "Career AI — TalentMap AI" },
       { property: "og:description", content: "Answers grounded in your recorded data." },
     ],
   }),
@@ -76,7 +76,7 @@ function AssistantPage() {
     <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-3xl flex-col gap-6">
       <PageHeader
         eyebrow="Career AI"
-        title="Ask TalentIQ"
+        title="Ask TalentMap"
         description="Career AI answers only from your recorded profile, evidence and the published internal roles."
       />
 

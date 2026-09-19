@@ -228,7 +228,7 @@ export function ResumeAndGithubSection({
           <p className="mt-1 min-h-10 text-xs leading-relaxed text-muted-foreground">
             {connected
               ? `${status.data?.githubUsername ? `Connected as ${status.data.githubUsername}. ` : "Connected. "}${stats.repos} permitted repositories analyzed.`
-              : "Authorize access before TalentIQ reads any repository data."}
+              : "Authorize access before TalentMap AI reads any repository data."}
           </p>
           {connected ? (
             <Button
@@ -260,7 +260,7 @@ export function ResumeAndGithubSection({
       <div>
         <SectionTitle
           title="Resume"
-          description="Upload a resume so TalentIQ can read your experience. Files are private to you and HR."
+          description="Upload a resume so TalentMap AI can read your experience. Files are private to you and HR."
         />
         <div className="panel space-y-4 p-6">
           <input
@@ -298,7 +298,7 @@ export function ResumeAndGithubSection({
                 Your resume mentions github.com/{detected}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                TalentIQ has not opened it. Nothing is read from GitHub unless you authorize the
+                TalentMap AI has not opened it. Nothing is read from GitHub unless you authorize the
                 connection yourself — including anything private.
               </p>
             </div>

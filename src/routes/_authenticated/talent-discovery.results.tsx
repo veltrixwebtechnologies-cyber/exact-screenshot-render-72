@@ -11,12 +11,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/talent-discovery/results")({
   head: () => ({
     meta: [
-      { title: "Discovery results — TalentIQ" },
+      { title: "Discovery results — TalentMap AI" },
       {
         name: "description",
         content: "Your strongest demonstrated skills, potential capabilities, evidence and next steps.",
       },
-      { property: "og:title", content: "Discovery results — TalentIQ" },
+      { property: "og:title", content: "Discovery results — TalentMap AI" },
       { property: "og:description", content: "Evidence-based capability insights." },
     ],
   }),
@@ -57,7 +57,7 @@ function ResultsPage() {
       {insights.length === 0 ? (
         <EmptyState
           title="No results yet"
-          description="Run a discovery session and TalentIQ will generate capability insights with the evidence behind them."
+          description="Run a discovery session and TalentMap AI will generate capability insights with the evidence behind them."
           action={
             <Link to="/talent-discovery/assessment" className="text-sm font-medium text-primary hover:underline">
               Start a session

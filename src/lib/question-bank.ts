@@ -1,5 +1,5 @@
 // Fallback adaptive question bank. Used when the AI provider is unavailable so
-// the discovery assessment always works. Original questions written for TalentIQ.
+// the discovery assessment always works. Original questions written for TalentMap AI.
 
 export interface BankOption {
   label: string;

@@ -17,13 +17,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Your profile — TalentIQ" },
+      { title: "Your profile — TalentMap AI" },
       {
         name: "description",
         content: "Keep your role, projects, achievements, certifications and learning history up to date.",
       },
-      { property: "og:title", content: "Your profile — TalentIQ" },
-      { property: "og:description", content: "The evidence TalentIQ reasons over." },
+      { property: "og:title", content: "Your profile — TalentMap AI" },
+      { property: "og:description", content: "The evidence TalentMap AI reasons over." },
     ],
   }),
   component: ProfilePage,
@@ -87,7 +87,7 @@ function ProfilePage() {
       <PageHeader
         eyebrow="Profile"
         title="Your experience on record"
-        description="TalentIQ reasons only over what it can see. The richer this profile, the better the capability insights and role matches."
+        description="TalentMap AI reasons only over what it can see. The richer this profile, the better the capability insights and role matches."
       />
 
       <form onSubmit={save} className="panel max-w-3xl space-y-5 p-6">

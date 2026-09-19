@@ -13,12 +13,12 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/_authenticated/hr/talent-search")({
   head: () => ({
     meta: [
-      { title: "Talent search — TalentIQ" },
+      { title: "Talent search — TalentMap AI" },
       {
         name: "description",
         content: "Search the workforce by meaning, not keywords, and see the evidence behind every result.",
       },
-      { property: "og:title", content: "Talent search — TalentIQ" },
+      { property: "og:title", content: "Talent search — TalentMap AI" },
       { property: "og:description", content: "Evidence-backed semantic talent search." },
     ],
   }),

@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 export const Route = createFileRoute("/oauth/github/return")({
   head: () => ({
     meta: [
-      { title: "Finishing GitHub connection — TalentIQ" },
-      { name: "description", content: "Completing the authorized GitHub connection for your TalentIQ profile." },
-      { property: "og:title", content: "Finishing GitHub connection — TalentIQ" },
+      { title: "Finishing GitHub connection — TalentMap AI" },
+      { name: "description", content: "Completing the authorized GitHub connection for your TalentMap AI profile." },
+      { property: "og:title", content: "Finishing GitHub connection — TalentMap AI" },
       { property: "og:description", content: "Completing the authorized GitHub connection." },
     ],
   }),

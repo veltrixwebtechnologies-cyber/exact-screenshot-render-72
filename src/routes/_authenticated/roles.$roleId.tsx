@@ -13,12 +13,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/roles/$roleId")({
   head: () => ({
     meta: [
-      { title: "Why this match — TalentIQ" },
+      { title: "Why this match — TalentMap AI" },
       {
         name: "description",
         content: "The evidence behind this internal role match, where each signal came from, and the skills still to build.",
       },
-      { property: "og:title", content: "Why this match — TalentIQ" },
+      { property: "og:title", content: "Why this match — TalentMap AI" },
       { property: "og:description", content: "Explainable internal role match with inspectable evidence." },
     ],
   }),

@@ -8,12 +8,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/hr/skills")({
   head: () => ({
     meta: [
-      { title: "Skill intelligence — TalentIQ" },
+      { title: "Skill intelligence — TalentMap AI" },
       {
         name: "description",
         content: "Skill coverage by department: strong, moderate, low or missing across the workforce.",
       },
-      { property: "og:title", content: "Skill intelligence — TalentIQ" },
+      { property: "og:title", content: "Skill intelligence — TalentMap AI" },
       { property: "og:description", content: "Department by skill capability coverage." },
     ],
   }),
