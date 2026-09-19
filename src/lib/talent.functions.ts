@@ -190,6 +190,14 @@ function contextToText(context: EmployeeContext): string {
       ? String(context.resumes[0].extracted_text).slice(0, 1500)
       : "- no resume uploaded",
     "",
+    "Portfolio claims checked against the connected evidence (strength: strong = supported, moderate = partly supported, needs_evidence = not established; never treat a claim as proven):",
+    ...(portfolioClaimsOf(context).length
+      ? portfolioClaimsOf(context).map(
+          (c) =>
+            `- "${c.claim.slice(0, 180)}" — evidence ${c.strength}${c.repo_name ? `, linked repository ${c.repo_name}` : ", no linked repository"}`,
+        )
+      : ["- no portfolio verified"]),
+    "",
     "Feedback the employee gave on earlier recommendations (respect it: prioritise what they marked useful, de-prioritise what they marked not relevant):",
     ...(context.feedback.length
       ? context.feedback.map(
