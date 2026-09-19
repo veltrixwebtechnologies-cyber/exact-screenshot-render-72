@@ -6,13 +6,13 @@ import heroImage from "@/assets/talentiq-hero.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TalentIQ — AI-powered talent discovery & career intelligence" },
+      { title: "TalentMap AI — AI-powered talent discovery & career intelligence" },
       {
         name: "description",
         content:
-          "TalentIQ surfaces the skills and potential capabilities hidden behind job titles, matches people to internal roles and turns skill gaps into development plans.",
+          "TalentMap AI surfaces the skills and potential capabilities hidden behind job titles, matches people to internal roles and turns skill gaps into development plans.",
       },
-      { property: "og:title", content: "TalentIQ — AI-powered talent discovery" },
+      { property: "og:title", content: "TalentMap AI — AI-powered talent discovery" },
       {
         property: "og:description",
         content:
@@ -55,7 +55,7 @@ function Landing() {
             <span className="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground">
               <Sparkles aria-hidden className="size-4" />
             </span>
-            <span className="text-sm font-semibold tracking-tight">TalentIQ</span>
+            <span className="text-sm font-semibold tracking-tight">TalentMap AI</span>
           </div>
           <Link
             to="/auth"
@@ -75,7 +75,7 @@ function Landing() {
             A job title never shows everything a person can do.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            TalentIQ reads the evidence already inside your organisation — projects, achievements,
+            TalentMap AI reads the evidence already inside your organisation — projects, achievements,
             certifications, learning history — and pairs it with an adaptive interview to surface
             potential capabilities, match people to internal roles and close real skill gaps.
           </p>
@@ -117,7 +117,7 @@ function Landing() {
           <div className="panel mt-14 overflow-hidden p-2">
             <img
               src={heroImage}
-              alt="TalentIQ workforce dashboard with a capability profile card"
+              alt="TalentMap AI workforce dashboard with a capability profile card"
               width={1600}
               height={1104}
               className="w-full rounded-lg"
@@ -145,7 +145,7 @@ function Landing() {
         <div className="mx-auto max-w-3xl px-4 py-16 text-center lg:px-8">
           <h2 className="text-xl font-semibold">Insights you can defend</h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            TalentIQ never claims a questionnaire proves a talent. Every capability is presented as
+            TalentMap AI never claims a questionnaire proves a talent. Every capability is presented as
             a potential strength, with the confidence level, the evidence behind it and a plain
             explanation of why it was identified.
           </p>
@@ -161,7 +161,7 @@ function Landing() {
 
       <footer className="border-t border-border py-8">
         <p className="mx-auto max-w-6xl px-4 text-xs text-muted-foreground lg:px-8">
-          TalentIQ · Internal talent discovery and career intelligence. Sample workforce content is
+          TalentMap AI · Internal talent discovery and career intelligence. Sample workforce content is
           labelled as demo data.
         </p>
       </footer>

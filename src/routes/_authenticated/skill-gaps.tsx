@@ -17,12 +17,12 @@ import {
 export const Route = createFileRoute("/_authenticated/skill-gaps")({
   head: () => ({
     meta: [
-      { title: "Skill gaps — TalentIQ" },
+      { title: "Skill gaps — TalentMap AI" },
       {
         name: "description",
         content: "Compare your current skills with a target internal role and get a development plan.",
       },
-      { property: "og:title", content: "Skill gaps — TalentIQ" },
+      { property: "og:title", content: "Skill gaps — TalentMap AI" },
       { property: "og:description", content: "Turn gaps into a specific development plan." },
     ],
   }),
@@ -57,7 +57,7 @@ function SkillGapsPage() {
       <PageHeader
         eyebrow="Develop"
         title="Skill gap analysis"
-        description="Pick the role you are aiming for. TalentIQ compares its requirements with what you already have on record."
+        description="Pick the role you are aiming for. TalentMap AI compares its requirements with what you already have on record."
         actions={
           <Select value={target.id} onValueChange={setTargetId}>
             <SelectTrigger className="sm:w-72">

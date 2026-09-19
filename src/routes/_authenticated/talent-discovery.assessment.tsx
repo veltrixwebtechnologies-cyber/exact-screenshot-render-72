@@ -17,12 +17,12 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/talent-discovery/assessment")({
   head: () => ({
     meta: [
-      { title: "Discovery session — TalentIQ" },
+      { title: "Discovery session — TalentMap AI" },
       {
         name: "description",
         content: "An adaptive interview that narrows in on your potential capabilities.",
       },
-      { property: "og:title", content: "Discovery session — TalentIQ" },
+      { property: "og:title", content: "Discovery session — TalentMap AI" },
       { property: "og:description", content: "Answer a short adaptive interview." },
     ],
   }),

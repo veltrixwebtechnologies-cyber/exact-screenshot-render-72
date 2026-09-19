@@ -11,12 +11,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/hr/emerging-skills")({
   head: () => ({
     meta: [
-      { title: "Emerging skills — TalentIQ" },
+      { title: "Emerging skills — TalentMap AI" },
       {
         name: "description",
         content: "AI-generated organisational insight on growing capability, current shortages and future gaps.",
       },
-      { property: "og:title", content: "Emerging skills — TalentIQ" },
+      { property: "og:title", content: "Emerging skills — TalentMap AI" },
       { property: "og:description", content: "Where workforce capability is heading." },
     ],
   }),

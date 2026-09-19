@@ -169,7 +169,7 @@ function contextToText(context: EmployeeContext): string {
   return lines.join("\n");
 }
 
-const LANGUAGE_RULES = `You are the analysis engine of TalentIQ, an internal talent intelligence platform.
+const LANGUAGE_RULES = `You are the analysis engine of TalentMap AI, an internal talent intelligence platform.
 Rules you must never break:
 - Never claim certainty about a person's talent. Use "potential capability", "suggested strength", "evidence suggests".
 - Every claim must be tied to concrete evidence drawn from the provided data.
@@ -245,7 +245,7 @@ function bankToPayload(
     total: TOTAL_QUESTIONS,
     fallback: true,
     type: "behavioural",
-    rationale: `This question helps TalentIQ understand how you work in practice${
+    rationale: `This question helps TalentMap AI understand how you work in practice${
       hasPrevious ? ", building on your previous answers" : ""
     }. It is a standard question, used because we could not generate one from your own evidence right now.`,
     evidenceConsidered: [],
@@ -334,7 +334,7 @@ Current leading capability signals: ${leading.length ? leading.join(", ") : "non
 Allowed signals: Leadership, Communication, Mentoring, Decision Making, Problem Solving, Creativity, Planning, Research, Team Coordination, Customer Understanding, Ownership, Strategic Thinking, System Thinking, Technical Implementation, Applied AI Engineering.
 
 Return ONLY JSON:
-{"question":"...","category":"short label such as the capability under test","rationale":"1-2 sentences: what this question helps TalentIQ understand","evidence_considered":["real repository / project / record name and why it was considered"],"options":[{"label":"first person answer option","signals":["Signal"]}]}
+{"question":"...","category":"short label such as the capability under test","rationale":"1-2 sentences: what this question helps TalentMap AI understand","evidence_considered":["real repository / project / record name and why it was considered"],"options":[{"label":"first person answer option","signals":["Signal"]}]}
 Provide 4 or 5 options. evidence_considered must only list records that appear in the evidence above; use an empty array if you used none.`;
 
     const raw = await callAI([{ role: "user", content: prompt }], { temperature: 0.7 });
@@ -368,7 +368,7 @@ Provide 4 or 5 options. evidence_considered must only list records that appear i
         type: wantedType,
         rationale:
           parsed.rationale ??
-          "This question helps TalentIQ understand how you actually work, so capabilities are backed by evidence rather than assumed.",
+          "This question helps TalentMap AI understand how you actually work, so capabilities are backed by evidence rather than assumed.",
         evidenceConsidered: evidenceConsidered.length
           ? evidenceConsidered
           : hypotheses.slice(0, 3).flatMap((h) => h.evidence.slice(0, 1).map((e) => `${e.ref} — ${e.detail}`)),
@@ -557,7 +557,7 @@ ${(roles ?? []).map((r: any) => `- ${r.title} (${r.department}) requires: ${(r.r
       {
         role: "system",
         content: `${LANGUAGE_RULES}
-You are "Career AI", the career assistant inside TalentIQ. Answer only from the retrieved context below. If the context does not contain the answer, say "I don't have enough information to determine that yet." Keep answers under 180 words, concrete, and reference the evidence you used.
+You are "Career AI", the career assistant inside TalentMap AI. Answer only from the retrieved context below. If the context does not contain the answer, say "I don't have enough information to determine that yet." Keep answers under 180 words, concrete, and reference the evidence you used.
 
 RETRIEVED CONTEXT:
 ${retrieved}`,

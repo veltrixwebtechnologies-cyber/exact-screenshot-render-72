@@ -14,9 +14,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — TalentIQ" },
-      { name: "description", content: "Your account, access level and data visibility in TalentIQ." },
-      { property: "og:title", content: "Settings — TalentIQ" },
+      { title: "Settings — TalentMap AI" },
+      { name: "description", content: "Your account, access level and data visibility in TalentMap AI." },
+      { property: "og:title", content: "Settings — TalentMap AI" },
       { property: "og:description", content: "Account and access settings." },
     ],
   }),
@@ -39,7 +39,7 @@ function SettingsPage() {
 
   return (
     <div className="max-w-2xl space-y-10">
-      <PageHeader eyebrow="Settings" title="Account" description="Your identity and access level in TalentIQ." />
+      <PageHeader eyebrow="Settings" title="Account" description="Your identity and access level in TalentMap AI." />
 
       <section className="panel space-y-4 p-6">
         <Row label="Name" value={me.employee.name} />

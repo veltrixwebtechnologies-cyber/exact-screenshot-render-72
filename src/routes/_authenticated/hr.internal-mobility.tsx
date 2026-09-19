@@ -17,12 +17,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/hr/internal-mobility")({
   head: () => ({
     meta: [
-      { title: "Internal mobility — TalentIQ" },
+      { title: "Internal mobility — TalentMap AI" },
       {
         name: "description",
         content: "Publish internal opportunities and see which employees already fit, with the evidence behind each match.",
       },
-      { property: "og:title", content: "Internal mobility — TalentIQ" },
+      { property: "og:title", content: "Internal mobility — TalentMap AI" },
       { property: "og:description", content: "Fill roles from inside, with evidence." },
     ],
   }),

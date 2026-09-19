@@ -18,12 +18,12 @@ import {
 export const Route = createFileRoute("/_authenticated/career-roadmap")({
   head: () => ({
     meta: [
-      { title: "Career roadmap — TalentIQ" },
+      { title: "Career roadmap — TalentMap AI" },
       {
         name: "description",
         content: "A step-by-step path from your current role to a long-term destination, with the skills each step needs.",
       },
-      { property: "og:title", content: "Career roadmap — TalentIQ" },
+      { property: "og:title", content: "Career roadmap — TalentMap AI" },
       { property: "og:description", content: "Current, next, possible future and long-term steps." },
     ],
   }),

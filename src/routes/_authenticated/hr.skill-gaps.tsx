@@ -8,12 +8,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const Route = createFileRoute("/_authenticated/hr/skill-gaps")({
   head: () => ({
     meta: [
-      { title: "Organisational skill gaps — TalentIQ" },
+      { title: "Organisational skill gaps — TalentMap AI" },
       {
         name: "description",
         content: "Compare what open internal roles require with the capability recorded across the workforce.",
       },
-      { property: "og:title", content: "Organisational skill gaps — TalentIQ" },
+      { property: "og:title", content: "Organisational skill gaps — TalentMap AI" },
       { property: "og:description", content: "Demand versus supply across the workforce." },
     ],
   }),
