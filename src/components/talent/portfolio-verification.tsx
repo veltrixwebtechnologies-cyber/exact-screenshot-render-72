@@ -208,7 +208,7 @@ export function PortfolioVerificationSection({
                             <span
                               className={
                                 check.passed
-                                  ? "font-semibold text-[color:var(--success)]"
+                                  ? "font-semibold text-success"
                                   : "font-semibold text-muted-foreground"
                               }
                             >
