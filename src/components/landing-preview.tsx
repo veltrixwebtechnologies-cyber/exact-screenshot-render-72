@@ -108,7 +108,7 @@ export function LandingPreview() {
               <div className="mt-3 flex h-28 items-end gap-3">
                 {coverageBars.map((bar) => (
                   <div key={bar.team} className="flex flex-1 flex-col items-center gap-1.5">
-                    <div className="flex w-full flex-1 items-end rounded-sm bg-muted/60">
+                    <div className="flex h-20 w-full items-end rounded-sm bg-muted/60">
                       <div
                         className="w-full rounded-sm bg-primary"
                         style={{ height: `${bar.value}%` }}
