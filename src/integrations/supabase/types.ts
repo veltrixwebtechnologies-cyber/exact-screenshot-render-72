@@ -52,6 +52,36 @@ export type Database = {
           },
         ]
       }
+      app_user_connections: {
+        Row: {
+          connection_key_ciphertext: string
+          connector_id: string
+          created_at: string
+          external_username: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          connection_key_ciphertext: string
+          connector_id: string
+          created_at?: string
+          external_username?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          connection_key_ciphertext?: string
+          connector_id?: string
+          created_at?: string
+          external_username?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       assessment_responses: {
         Row: {
           answer: string
@@ -163,6 +193,47 @@ export type Database = {
           },
         ]
       }
+      employee_resumes: {
+        Row: {
+          created_at: string
+          detected_github_username: string | null
+          detected_links: string[]
+          employee_id: string
+          extracted_text: string | null
+          file_name: string
+          file_path: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          detected_github_username?: string | null
+          detected_links?: string[]
+          employee_id: string
+          extracted_text?: string | null
+          file_name: string
+          file_path: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          detected_github_username?: string | null
+          detected_links?: string[]
+          employee_id?: string
+          extracted_text?: string | null
+          file_name?: string
+          file_path?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_resumes_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_skills: {
         Row: {
           confidence: number
@@ -255,6 +326,62 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      github_evidence: {
+        Row: {
+          created_at: string
+          detected_tech: string[]
+          employee_id: string
+          github_username: string
+          id: string
+          is_private: boolean
+          languages: string[]
+          last_pushed_at: string | null
+          primary_language: string | null
+          repo_name: string
+          repo_url: string
+          stars: number
+          summary: string | null
+        }
+        Insert: {
+          created_at?: string
+          detected_tech?: string[]
+          employee_id: string
+          github_username: string
+          id?: string
+          is_private?: boolean
+          languages?: string[]
+          last_pushed_at?: string | null
+          primary_language?: string | null
+          repo_name: string
+          repo_url: string
+          stars?: number
+          summary?: string | null
+        }
+        Update: {
+          created_at?: string
+          detected_tech?: string[]
+          employee_id?: string
+          github_username?: string
+          id?: string
+          is_private?: boolean
+          languages?: string[]
+          last_pushed_at?: string | null
+          primary_language?: string | null
+          repo_name?: string
+          repo_url?: string
+          stars?: number
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "github_evidence_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       internal_roles: {
         Row: {
