@@ -125,10 +125,24 @@ function contextToText(context: EmployeeContext): string {
       ? context.learning.map((l) => `- ${l.course} (${l.provider ?? "unknown"}) skills: ${(l.skills_gained ?? []).join(", ")}`)
       : ["- none recorded"]),
     "",
+    "GitHub evidence (actual repositories analysed with the employee's authorisation):",
+    ...(context.github.length
+      ? context.github.map(
+          (g: any) =>
+            `- ${g.repo_name}${g.is_private ? " (private)" : ""}: languages ${(g.languages ?? []).join(", ") || "unknown"}; detected tech ${(g.detected_tech ?? []).join(", ") || "none"}; last activity ${g.last_pushed_at ? String(g.last_pushed_at).slice(0, 10) : "unknown"}; readme summary: ${(g.summary ?? "none").slice(0, 300)}`,
+        )
+      : ["- no GitHub connected"]),
+    "",
+    "Resume extract (first 1500 characters of the uploaded resume):",
+    context.resumes[0]?.extracted_text
+      ? String(context.resumes[0].extracted_text).slice(0, 1500)
+      : "- no resume uploaded",
+    "",
     "Previously detected potential capabilities:",
     ...(context.insights.length
       ? context.insights.map((i) => `- ${i.capability} (confidence ${Math.round(Number(i.confidence) * 100)}%): ${i.explanation ?? ""}`)
       : ["- none yet"]),
+
   ];
   return lines.join("\n");
 }
