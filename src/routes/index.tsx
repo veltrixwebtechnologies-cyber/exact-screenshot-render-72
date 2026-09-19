@@ -71,8 +71,8 @@ function Landing() {
         <div className="relative mx-auto max-w-6xl px-4 py-20 lg:px-8 lg:py-28">
           <p className="eyebrow">Talent discovery &amp; career intelligence</p>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">
-            An AI platform that looks beyond job titles and résumés to understand what employees can
-            actually do — and what they could do next.
+            Our AI doesn&apos;t just identify what employees are doing today — it discovers what
+            they are capable of doing tomorrow.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
             TalentMap AI reads the evidence already inside your organisation — projects, achievements,
