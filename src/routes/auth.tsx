@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import logoMark from "@/assets/talentmap-mark.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -97,9 +98,7 @@ function AuthPage() {
     <div className="grid min-h-screen lg:grid-cols-[1fr_1.1fr]">
       <div className="hidden flex-col justify-between border-r border-border bg-surface p-12 lg:flex">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground">
-            <Sparkles aria-hidden className="size-4" />
-          </span>
+          <img src={logoMark.url} alt="" className="size-7 rounded-md object-contain" />
           <span className="text-sm font-semibold">TalentMap AI</span>
         </Link>
         <div className="max-w-md space-y-5">

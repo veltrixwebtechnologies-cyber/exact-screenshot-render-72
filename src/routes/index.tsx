@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Compass, LineChart, Search, Sparkles, Target } from "lucide-react";
 
 import heroImage from "@/assets/talentiq-hero.jpg";
+import logoMark from "@/assets/talentmap-mark.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -52,9 +53,7 @@ function Landing() {
       <header className="glass-bar sticky top-0 z-30">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground">
-              <Sparkles aria-hidden className="size-4" />
-            </span>
+            <img src={logoMark.url} alt="" className="size-7 rounded-md object-contain" />
             <span className="text-sm font-semibold tracking-tight">TalentMap AI</span>
           </div>
           <Link
