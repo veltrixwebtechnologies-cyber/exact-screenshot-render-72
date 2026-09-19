@@ -7,6 +7,7 @@ import { useMe } from "@/hooks/useMe";
 import { useEmployeeBundle } from "@/hooks/useTalentData";
 import { useQueryClient } from "@tanstack/react-query";
 import { Chip, PageHeader, SectionTitle } from "@/components/talent/primitives";
+import { ResumeAndGithubSection } from "@/components/talent/resume-github";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -119,6 +120,8 @@ function ProfilePage() {
           {saving ? "Saving…" : "Save profile"}
         </Button>
       </form>
+
+      <ResumeAndGithubSection employeeId={me.employee.id} />
 
       <section>
         <SectionTitle title="Projects" description="Delivery evidence used for capability reasoning." />
