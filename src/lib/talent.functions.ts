@@ -11,6 +11,14 @@ import {
   type QuestionType,
 } from "./hypotheses";
 import { callAI, parseJSON } from "./ai.server";
+import { enforceRateLimit } from "./rate-limit.server";
+import {
+  assessmentIdSchema,
+  careerChatSchema,
+  parseInput,
+  submitAnswerSchema,
+  talentSearchSchema,
+} from "./validation";
 
 export const TOTAL_QUESTIONS = 10;
 
@@ -232,10 +240,7 @@ function bankToPayload(
 }
 
 export const nextQuestion = createServerFn({ method: "POST" })
-  .inputValidator((data: { assessmentId: string }) => {
-    if (!data?.assessmentId) throw new Error("assessmentId is required");
-    return { assessmentId: data.assessmentId };
-  })
+  .inputValidator((data: unknown) => parseInput(assessmentIdSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }): Promise<QuestionPayload | { done: true }> => {
     const ctx = context as unknown as SupabaseCtx;
@@ -374,21 +379,7 @@ Provide 4 or 5 options. evidence_considered must only list records that appear i
 
 
 export const submitAnswer = createServerFn({ method: "POST" })
-  .inputValidator(
-    (data: {
-      assessmentId: string;
-      question: string;
-      category?: string;
-      answer: string;
-      signals: string[];
-      step: number;
-    }) => {
-      if (!data?.assessmentId || !data.question || !data.answer) {
-        throw new Error("assessmentId, question and answer are required");
-      }
-      return data;
-    },
-  )
+  .inputValidator((data: unknown) => parseInput(submitAnswerSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
@@ -413,10 +404,7 @@ export interface GeneratedInsight {
 }
 
 export const completeAssessment = createServerFn({ method: "POST" })
-  .inputValidator((data: { assessmentId: string }) => {
-    if (!data?.assessmentId) throw new Error("assessmentId is required");
-    return data;
-  })
+  .inputValidator((data: unknown) => parseInput(assessmentIdSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
@@ -522,10 +510,7 @@ Confidence is 0.4-0.9 and must be lower when the only support is interview answe
 /* ------------------------------------------------------------------ */
 
 export const careerChat = createServerFn({ method: "POST" })
-  .inputValidator((data: { message: string; history?: Array<{ role: string; content: string }> }) => {
-    if (!data?.message) throw new Error("message is required");
-    return { message: data.message, history: data.history ?? [] };
-  })
+  .inputValidator((data: unknown) => parseInput(careerChatSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
@@ -590,10 +575,7 @@ ${retrieved}`,
 /* ------------------------------------------------------------------ */
 
 export const talentSearch = createServerFn({ method: "POST" })
-  .inputValidator((data: { query: string }) => {
-    if (!data?.query) throw new Error("query is required");
-    return { query: data.query.slice(0, 300) };
-  })
+  .inputValidator((data: unknown) => parseInput(talentSearchSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
