@@ -70,6 +70,8 @@ function AssessmentPage() {
     async (id: string) => {
       setLoading(true);
       setSelected(null);
+      setShowWhy(false);
+
       try {
         const result = await fetchQuestion({ data: { assessmentId: id } });
         if ("done" in result) {
