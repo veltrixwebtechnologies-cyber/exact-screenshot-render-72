@@ -76,7 +76,7 @@ function AssistantPage() {
     <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-3xl flex-col gap-6">
       <PageHeader
         eyebrow="Career AI"
-        title="Ask about your own career"
+        title="Ask TalentIQ"
         description="Career AI answers only from your recorded profile, evidence and the published internal roles."
       />
 
