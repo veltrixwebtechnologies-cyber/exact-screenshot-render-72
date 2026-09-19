@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/hooks/useMe";
+import { grantHrAccess, listTeamAccess } from "@/lib/access.functions";
 import { Chip, PageHeader, SectionTitle } from "@/components/talent/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -89,35 +91,26 @@ function StaffNote() {
 function TeamAccess() {
   const queryClient = useQueryClient();
   const [pending, setPending] = useState<string | null>(null);
+  const loadTeam = useServerFn(listTeamAccess);
+  const grant = useServerFn(grantHrAccess);
+
   const people = useQuery({
     queryKey: ["team-access"],
     staleTime: 30_000,
-    queryFn: async () => {
-      const [{ data: employees, error }, { data: staff }] = await Promise.all([
-        supabase.from("employees").select("id,name,email,user_id,job_title").order("name"),
-        supabase.from("user_roles").select("user_id,role").in("role", ["hr", "admin"]),
-      ]);
-      if (error) throw error;
-      const staffIds = new Set((staff ?? []).map((r: { user_id: string }) => r.user_id));
-      return (employees ?? [])
-        .filter((e: { user_id: string | null }) => Boolean(e.user_id))
-        .map((e: { id: string; name: string; email: string | null; user_id: string | null; job_title: string | null }) => ({
-          ...e,
-          isStaff: staffIds.has(e.user_id as string),
-        }));
-    },
+    queryFn: async () => (await loadTeam()).people,
   });
 
   async function grantHr(userId: string) {
     setPending(userId);
-    const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: "hr" });
-    setPending(null);
-    if (error) {
+    try {
+      await grant({ data: { userId } });
+      toast.success("HR access granted.");
+      await queryClient.invalidateQueries({ queryKey: ["team-access"] });
+    } catch {
       toast.error("That access level could not be granted.");
-      return;
+    } finally {
+      setPending(null);
     }
-    toast.success("HR access granted.");
-    await queryClient.invalidateQueries({ queryKey: ["team-access"] });
   }
 
   return (

@@ -504,6 +504,44 @@ export type Database = {
           },
         ]
       }
+      recommendation_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          rating: number
+          target_label: string
+          target_type: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          rating: number
+          target_label: string
+          target_type: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          rating?: number
+          target_label?: string
+          target_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendation_feedback_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       recommendations: {
         Row: {
           created_at: string

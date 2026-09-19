@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 import { Chip, ConfidenceMeter } from "./primitives";
+import { FeedbackButtons } from "./feedback-buttons";
 import type { TalentInsight } from "@/hooks/useTalentData";
 
 export function CapabilityCard({ insight }: { insight: TalentInsight }) {
@@ -70,6 +71,14 @@ export function CapabilityCard({ insight }: { insight: TalentInsight }) {
       <p className="mt-4 text-xs text-muted-foreground">
         Evidence-based insight, not a definitive assessment. Source: {insight.source}.
       </p>
+
+      <div className="mt-3 border-t border-border pt-3">
+        <FeedbackButtons
+          targetType="capability"
+          targetLabel={insight.capability}
+          label="Does this reflect you?"
+        />
+      </div>
     </article>
   );
 }

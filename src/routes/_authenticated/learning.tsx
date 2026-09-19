@@ -6,6 +6,7 @@ import { useMe } from "@/hooks/useMe";
 import { useEmployeeBundle, useInternalRoles } from "@/hooks/useTalentData";
 import { matchRole, skillGaps } from "@/lib/talent";
 import { AIDisclosure, Chip, PageHeader, SectionTitle } from "@/components/talent/primitives";
+import { FeedbackButtons } from "@/components/talent/feedback-buttons";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -107,12 +108,19 @@ function LearningPage() {
                       </p>
                     </div>
                   ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+                 </div>
+                 <div className="mt-4 border-t border-border pt-3">
+                   <FeedbackButtons
+                     targetType="learning"
+                     targetLabel={gap.skill}
+                     label="Is this recommendation relevant?"
+                   />
+                 </div>
+               </div>
+             ))}
+           </div>
+         )}
+       </section>
 
       {(bundle?.recommendations ?? []).length ? (
         <section>

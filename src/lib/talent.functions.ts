@@ -11,6 +11,14 @@ import {
   type QuestionType,
 } from "./hypotheses";
 import { callAI, parseJSON } from "./ai.server";
+import { enforceRateLimit } from "./rate-limit.server";
+import {
+  assessmentIdSchema,
+  careerChatSchema,
+  parseInput,
+  submitAnswerSchema,
+  talentSearchSchema,
+} from "./validation";
 
 export const TOTAL_QUESTIONS = 10;
 
@@ -26,6 +34,7 @@ interface EmployeeContext {
   insights: any[];
   github: any[];
   resumes: any[];
+  feedback: Array<{ target_type: string; target_label: string; rating: number; comment: string | null }>;
 }
 
 async function loadEmployeeContext(
@@ -33,7 +42,7 @@ async function loadEmployeeContext(
   employeeId: string,
 ): Promise<EmployeeContext | null> {
   const { supabase } = ctx;
-  const [employee, skills, projects, achievements, certifications, learning, insights, github, resumes] =
+  const [employee, skills, projects, achievements, certifications, learning, insights, github, resumes, feedback] =
     await Promise.all([
       supabase.from("employees").select("*").eq("id", employeeId).maybeSingle(),
       supabase
@@ -52,6 +61,10 @@ async function loadEmployeeContext(
         .eq("employee_id", employeeId)
         .order("created_at", { ascending: false })
         .limit(1),
+      supabase
+        .from("recommendation_feedback")
+        .select("target_type, target_label, rating, comment")
+        .eq("employee_id", employeeId),
     ]);
 
   if (!employee.data) return null;
@@ -71,6 +84,7 @@ async function loadEmployeeContext(
     insights: insights.data ?? [],
     github: github.data ?? [],
     resumes: resumes.data ?? [],
+    feedback: feedback.data ?? [],
   };
 }
 
@@ -137,6 +151,14 @@ function contextToText(context: EmployeeContext): string {
     context.resumes[0]?.extracted_text
       ? String(context.resumes[0].extracted_text).slice(0, 1500)
       : "- no resume uploaded",
+    "",
+    "Feedback the employee gave on earlier recommendations (respect it: prioritise what they marked useful, de-prioritise what they marked not relevant):",
+    ...(context.feedback.length
+      ? context.feedback.map(
+          (f) =>
+            `- ${f.target_type}: ${f.target_label} -> ${f.rating > 0 ? "useful" : "not relevant"}${f.comment ? ` (${f.comment})` : ""}`,
+        )
+      : ["- no feedback given yet"]),
     "",
     "Previously detected potential capabilities:",
     ...(context.insights.length
@@ -232,13 +254,11 @@ function bankToPayload(
 }
 
 export const nextQuestion = createServerFn({ method: "POST" })
-  .inputValidator((data: { assessmentId: string }) => {
-    if (!data?.assessmentId) throw new Error("assessmentId is required");
-    return { assessmentId: data.assessmentId };
-  })
+  .inputValidator((data: unknown) => parseInput(assessmentIdSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }): Promise<QuestionPayload | { done: true }> => {
     const ctx = context as unknown as SupabaseCtx;
+    enforceRateLimit(`next-question:${ctx.userId}`, { limit: 40, windowMs: 60_000 });
 
     const { data: assessment } = await ctx.supabase
       .from("assessments")
@@ -374,21 +394,7 @@ Provide 4 or 5 options. evidence_considered must only list records that appear i
 
 
 export const submitAnswer = createServerFn({ method: "POST" })
-  .inputValidator(
-    (data: {
-      assessmentId: string;
-      question: string;
-      category?: string;
-      answer: string;
-      signals: string[];
-      step: number;
-    }) => {
-      if (!data?.assessmentId || !data.question || !data.answer) {
-        throw new Error("assessmentId, question and answer are required");
-      }
-      return data;
-    },
-  )
+  .inputValidator((data: unknown) => parseInput(submitAnswerSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
@@ -413,13 +419,11 @@ export interface GeneratedInsight {
 }
 
 export const completeAssessment = createServerFn({ method: "POST" })
-  .inputValidator((data: { assessmentId: string }) => {
-    if (!data?.assessmentId) throw new Error("assessmentId is required");
-    return data;
-  })
+  .inputValidator((data: unknown) => parseInput(assessmentIdSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
+    enforceRateLimit(`complete-assessment:${ctx.userId}`, { limit: 10, windowMs: 60_000 });
 
     const { data: assessment } = await ctx.supabase
       .from("assessments")
@@ -522,13 +526,11 @@ Confidence is 0.4-0.9 and must be lower when the only support is interview answe
 /* ------------------------------------------------------------------ */
 
 export const careerChat = createServerFn({ method: "POST" })
-  .inputValidator((data: { message: string; history?: Array<{ role: string; content: string }> }) => {
-    if (!data?.message) throw new Error("message is required");
-    return { message: data.message, history: data.history ?? [] };
-  })
+  .inputValidator((data: unknown) => parseInput(careerChatSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
+    enforceRateLimit(`career-chat:${ctx.userId}`, { limit: 20, windowMs: 60_000 });
     const { data: employee } = await ctx.supabase
       .from("employees")
       .select("id")
@@ -590,13 +592,11 @@ ${retrieved}`,
 /* ------------------------------------------------------------------ */
 
 export const talentSearch = createServerFn({ method: "POST" })
-  .inputValidator((data: { query: string }) => {
-    if (!data?.query) throw new Error("query is required");
-    return { query: data.query.slice(0, 300) };
-  })
+  .inputValidator((data: unknown) => parseInput(talentSearchSchema, data))
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const ctx = context as unknown as SupabaseCtx;
+    enforceRateLimit(`talent-search:${ctx.userId}`, { limit: 30, windowMs: 60_000 });
 
     const { data: staff } = await ctx.supabase
       .from("user_roles")
