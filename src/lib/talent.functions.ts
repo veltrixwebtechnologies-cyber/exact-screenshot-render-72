@@ -34,6 +34,7 @@ interface EmployeeContext {
   insights: any[];
   github: any[];
   resumes: any[];
+  portfolios: any[];
   feedback: Array<{ target_type: string; target_label: string; rating: number; comment: string | null }>;
 }
 
@@ -42,7 +43,19 @@ async function loadEmployeeContext(
   employeeId: string,
 ): Promise<EmployeeContext | null> {
   const { supabase } = ctx;
-  const [employee, skills, projects, achievements, certifications, learning, insights, github, resumes, feedback] =
+  const [
+    employee,
+    skills,
+    projects,
+    achievements,
+    certifications,
+    learning,
+    insights,
+    github,
+    resumes,
+    portfolios,
+    feedback,
+  ] =
     await Promise.all([
       supabase.from("employees").select("*").eq("id", employeeId).maybeSingle(),
       supabase
@@ -61,6 +74,12 @@ async function loadEmployeeContext(
         .eq("employee_id", employeeId)
         .order("created_at", { ascending: false })
         .limit(1),
+      supabase
+        .from("portfolio_verifications")
+        .select("portfolio_url, overall_strength, claims, checked_at")
+        .eq("employee_id", employeeId)
+        .order("checked_at", { ascending: false })
+        .limit(3),
       supabase
         .from("recommendation_feedback")
         .select("target_type, target_label, rating, comment")
@@ -84,8 +103,26 @@ async function loadEmployeeContext(
     insights: insights.data ?? [],
     github: github.data ?? [],
     resumes: resumes.data ?? [],
+    portfolios: portfolios.data ?? [],
     feedback: feedback.data ?? [],
   };
+}
+
+/** Flattens the claims from every verified portfolio into hypothesis input. */
+function portfolioClaimsOf(context: EmployeeContext): Array<{
+  claim: string;
+  strength: string;
+  repo_name?: string | null;
+  technologies?: string[] | null;
+}> {
+  return (context.portfolios ?? []).flatMap((row: any) =>
+    ((row?.claims ?? []) as any[]).map((claim: any) => ({
+      claim: String(claim?.claim ?? ""),
+      strength: String(claim?.strength ?? "needs_evidence"),
+      repo_name: claim?.repo_name ?? null,
+      technologies: claim?.technologies ?? [],
+    })),
+  ).filter((claim) => claim.claim.length > 0);
 }
 
 function hypothesesFor(context: EmployeeContext | null): CapabilityHypothesis[] {
@@ -97,6 +134,7 @@ function hypothesesFor(context: EmployeeContext | null): CapabilityHypothesis[] 
     certifications: context.certifications as any[],
     learning: context.learning as any[],
     resumeText: context.resumes[0]?.extracted_text ?? null,
+    portfolioClaims: portfolioClaimsOf(context),
   });
 }
 
@@ -151,6 +189,14 @@ function contextToText(context: EmployeeContext): string {
     context.resumes[0]?.extracted_text
       ? String(context.resumes[0].extracted_text).slice(0, 1500)
       : "- no resume uploaded",
+    "",
+    "Portfolio claims checked against the connected evidence (strength: strong = supported, moderate = partly supported, needs_evidence = not established; never treat a claim as proven):",
+    ...(portfolioClaimsOf(context).length
+      ? portfolioClaimsOf(context).map(
+          (c) =>
+            `- "${c.claim.slice(0, 180)}" — evidence ${c.strength}${c.repo_name ? `, linked repository ${c.repo_name}` : ", no linked repository"}`,
+        )
+      : ["- no portfolio verified"]),
     "",
     "Feedback the employee gave on earlier recommendations (respect it: prioritise what they marked useful, de-prioritise what they marked not relevant):",
     ...(context.feedback.length

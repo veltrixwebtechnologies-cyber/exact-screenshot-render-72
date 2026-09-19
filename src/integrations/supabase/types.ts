@@ -457,6 +457,59 @@ export type Database = {
           },
         ]
       }
+      portfolio_verifications: {
+        Row: {
+          checked_at: string
+          claims: Json
+          created_at: string
+          detected_demo_links: string[]
+          detected_repo_links: string[]
+          employee_id: string
+          id: string
+          notes: string | null
+          overall_strength: string
+          page_title: string | null
+          portfolio_url: string
+          updated_at: string
+        }
+        Insert: {
+          checked_at?: string
+          claims?: Json
+          created_at?: string
+          detected_demo_links?: string[]
+          detected_repo_links?: string[]
+          employee_id: string
+          id?: string
+          notes?: string | null
+          overall_strength?: string
+          page_title?: string | null
+          portfolio_url: string
+          updated_at?: string
+        }
+        Update: {
+          checked_at?: string
+          claims?: Json
+          created_at?: string
+          detected_demo_links?: string[]
+          detected_repo_links?: string[]
+          employee_id?: string
+          id?: string
+          notes?: string | null
+          overall_strength?: string
+          page_title?: string | null
+          portfolio_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_verifications_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string

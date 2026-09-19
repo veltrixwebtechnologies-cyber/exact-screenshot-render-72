@@ -8,6 +8,7 @@ import { matchRole } from "@/lib/talent";
 import { AIDisclosure, Chip, PageHeader, SectionTitle } from "@/components/talent/primitives";
 import { CapabilityCard } from "@/components/talent/capability-card";
 import { ResumeAndGithubSection } from "@/components/talent/resume-github";
+import { PortfolioVerificationSection } from "@/components/talent/portfolio-verification";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/talent-discovery/")({
@@ -90,6 +91,7 @@ function BuildProfileFlow() {
         body="Resume, GitHub, projects, achievements, certifications and learning history. Nothing is read from GitHub unless you authorize it."
       >
         <ResumeAndGithubSection employeeId={employeeId} compact />
+        <PortfolioVerificationSection employeeId={employeeId} compact />
         <div className="flex flex-wrap items-center gap-2">
           <Chip tone={resumes?.length ? "success" : "outline"}>
             <FileUp aria-hidden className="size-3.5" />
